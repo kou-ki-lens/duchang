@@ -56,7 +56,7 @@
   .tag.j{background:#123a4a;border-color:#4f93f066}
   .flash{animation:fl 1s infinite}
   @keyframes fl{50%{opacity:.45}}
-  @media (max-width:980px){ .hud{width:540px} }
+  @media (max-width:980px){ .hud{max-width:94vw} }   /* 手机端由下方 1024px 断点接管为 100% */
 
   /* ================= 大厅 / 双机外壳 ================= */
   body::before{
@@ -795,6 +795,110 @@
     box-shadow:0 22px 50px #000c,0 0 34px #f4cd6b26;pointer-events:none;transition:.28s
   }
   .wtoast.show{opacity:1;transform:translate(-50%,0)}
+
+  /* ================================================================
+     手机／平板自适应（电脑端布局完全不受影响）
+     ================================================================ */
+  button,.tab,.chip,.nc,.rr-cell,.ken-ball,.betcard,.pcard{
+    touch-action:manipulation;-webkit-tap-highlight-color:transparent
+  }
+  @media (max-width:1024px){
+    .hud{width:100%;max-width:100%}
+    .cabinet,.slot-cab,.wheel-cab,.cas-table{width:100%;max-width:100%}
+  }
+  @media (max-width:900px){
+    .topbar{padding:8px 10px;gap:8px}
+    .brand{font-size:12px}
+    .brand span{display:none}
+    .tabs{
+      flex-wrap:nowrap;overflow-x:auto;overflow-y:hidden;width:100%;margin-left:0;
+      padding-bottom:5px;scrollbar-width:none;-webkit-overflow-scrolling:touch
+    }
+    .tabs::-webkit-scrollbar{display:none}
+    .tab{flex:0 0 auto;padding:8px 12px;font-size:12.5px;gap:5px}
+    .tab svg{width:17px;height:17px;flex:0 0 17px}
+    .wstrip{width:100%;margin-left:0;order:3;gap:6px}
+    .wpill{padding:4px 9px;font-size:11.5px}
+    .wbtn2{padding:6px 11px;font-size:11.5px}
+    .wrap,.slot-wrap,.wheel-wrap,.cas-wrap{padding:10px 8px 28px;gap:12px}
+    .cabinet,.slot-cab,.wheel-cab,.cas-table{border-radius:18px;padding:10px}
+    .card{padding:12px;border-radius:14px}
+    .lobby{padding:16px 10px 46px}
+    .hero h1{font-size:clamp(24px,7vw,34px)}
+    .casino-sign{font-size:clamp(30px,10vw,52px)!important;letter-spacing:.14em}
+    .casino-sign em{letter-spacing:.08em}
+    .sky-avatar{width:212px;flex:0 0 212px}
+    .saya-avatar{max-width:200px}
+    .night-corner{grid-template-columns:160px 1fr;padding:14px}
+    .cas-hub{padding:14px}
+    .cards{gap:14px}
+    .card-btn{padding:14px;gap:12px;border-radius:16px}
+    .card-art{flex:0 0 86px}
+    .card-art svg{width:68px;height:68px}
+    .mascot-dock{width:min(268px,calc(100vw - 16px));left:8px;bottom:8px}
+    .mascot-art{width:80px;height:92px;flex:0 0 80px}
+  }
+  @media (max-width:620px){
+    .hero-badge{font-size:10.5px;padding:4px 10px;letter-spacing:.12em}
+    .sky-avatar{width:178px;flex:0 0 178px}
+    .saya-avatar{max-width:158px}
+    .night-corner{grid-template-columns:1fr}
+    .night-corner .nc-art{margin:0 auto}
+    /* 宽桌台改为可横向滑动，格子保持可点大小 */
+    .numgrid{overflow-x:auto;padding-bottom:5px;-webkit-overflow-scrolling:touch}
+    .nc{min-width:34px}
+    .ken-grid{overflow-x:auto;padding-bottom:5px}
+    .ken-ball{min-width:27px;font-size:11px}
+    .rr-cell{padding:6px 2px;font-size:11px}
+    .rr-cell b{font-size:12px;margin-top:1px}
+    #sic-b,#sic-c{grid-template-columns:repeat(4,minmax(56px,1fr))!important}
+    #sic-d,#sic-e{grid-template-columns:repeat(3,minmax(60px,1fr))!important}
+    #bac-bets{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+    .bac-row{min-height:76px;gap:6px}
+    .bac-total{min-width:42px;height:42px;font-size:20px}
+    .pcard{width:52px;height:74px}
+    .pcard .r{font-size:14px}
+    .pcard .s{font-size:18px}
+    .chip{width:44px;height:44px;font-size:11px}
+    .abtn{padding:9px 12px;font-size:12.5px;min-width:62px}
+    .paytable{padding:10px}
+    .wmodal{padding:8px}
+    .wpanel{width:100%;max-width:100%;border-radius:16px;padding:16px}
+    .wgrid{grid-template-columns:repeat(2,1fr);gap:8px}
+    .wbox b{font-size:16px}
+    .dice-wrap{gap:10px}
+    .die{width:62px;height:62px;border-radius:12px;padding:7px}
+    .felt{padding:12px}
+    .felt-label{letter-spacing:.2em;font-size:10px}
+    .hand-row{min-height:78px}
+  }
+  @media (max-width:430px){
+    .wstrip .wpill.debt{display:none}
+    .chip{width:40px;height:40px;font-size:10.5px}
+    .tab{padding:7px 10px;font-size:12px}
+    .ken-ball{min-width:25px;font-size:10.5px}
+    .night-corner .row button{flex:1 1 auto}
+  }
+  @media (pointer:coarse){
+    .chip{width:50px;height:50px}
+    .abtn{padding:11px 14px}
+    .nc{min-height:34px}
+    .rr-cell{min-height:40px}
+    .ken-ball{min-height:30px}
+  }
+  @supports(padding:env(safe-area-inset-bottom)){
+    .lobby,.wrap,.slot-wrap,.wheel-wrap,.cas-wrap{
+      padding-bottom:calc(30px + env(safe-area-inset-bottom))
+    }
+    .topbar{padding-top:max(8px,env(safe-area-inset-top))}
+  }
+  /* 手机横屏：把画布按高度收进来，免得要滚很久才看到操作区 */
+  @media (orientation:landscape) and (max-height:600px){
+    .cabinet canvas,.slot-cab canvas,.wheel-cab canvas,.cas-table canvas{
+      width:auto;max-height:74vh;margin:0 auto
+    }
+    .cabinet,.slot-cab,.wheel-cab,.cas-table{display:flex;flex-direction:column}
+  }
 </style>
 </head>
 <body>
@@ -1435,7 +1539,7 @@
           <button id="rl-reset" class="warn">重置</button>
         </div>
         <div class="log" id="rl-bets" style="margin-top:10px"></div>
-        <p class="hint" style="margin:8px 0 0">先点筹码选面额，再点桌上格子押注；点格子上的筹码可撤单。</p>
+        <p class="hint" style="margin:8px 0 0">先点筹码选面额，再点桌上格子押注；右键（手机长按）格子可撤单。</p>
       </div>
       <div class="card rules">
         <h2>玩法／赔率</h2>
@@ -1443,7 +1547,7 @@
           <li>轮盘 38 格（0・00＋1～36），落袋后按注种派彩。</li>
           <li>单号 35:1，红／黑・单／双・大／小 1:1，打（1-12 等）2:1。</li>
           <li>押红黑＝押该号属于红或黑；押大＝19～36，小＝1～18；单双不含 0・00。</li>
-          <li>点击格子押 1 注，右键或点已有筹码可撤单；「清空押注」全额退回。</li>
+          <li>点击格子押 1 注，右键（手机长按）可撤单；「清空押注」全额退回。</li>
         </ul>
         <h2 style="margin-top:12px">最近落点</h2>
         <div class="log" id="rl-log"></div>
@@ -1643,7 +1747,7 @@
           <button id="rr-reset" class="warn">重置牌桌</button>
         </div>
         <div class="log" id="rr-bets" style="margin-top:10px"></div>
-        <p class="hint" style="margin:8px 0 0">先点筹码选面额，再点下方注区押注；右键或「撤销」可撤单。</p>
+        <p class="hint" style="margin:8px 0 0">先点筹码选面额，再点下方注区押注；右键（手机长按）或「撤销」可撤单。</p>
       </div>
       <div class="card rules">
         <h2>玩法／赔率</h2>
@@ -1697,7 +1801,7 @@
           <button id="bac-reset" class="warn">重置牌桌</button>
         </div>
         <div class="bac-slip" id="bac-bets2" style="margin-top:10px"></div>
-        <p class="hint" style="margin:8px 0 0">先点筹码选面额，再点注区押注；右键注区或「撤销」可撤单。</p>
+        <p class="hint" style="margin:8px 0 0">先点筹码选面额，再点注区押注；右键（手机长按）注区或「撤销」可撤单。</p>
       </div>
       <div class="card rules">
         <h2>玩法／赔率</h2>
@@ -1760,7 +1864,7 @@
           <button id="sic-reset" class="warn">重置牌桌</button>
         </div>
         <div class="bac-slip" id="sic-bets2" style="margin-top:10px"></div>
-        <p class="hint" style="margin:8px 0 0">点注区下注，右键注区撤单；注区左上角显示已有注码。</p>
+        <p class="hint" style="margin:8px 0 0">点注区下注，右键（手机长按）注区撤单；注区左上角显示已有注码。</p>
       </div>
       <div class="card rules">
         <h2>玩法／赔率</h2>
@@ -2172,9 +2276,122 @@
   };
   window.WALLET.bankruptTick = bankruptTick;   // 测试/调试用钩子
   window.WALLET.autoCashOut = autoCashOut;
+
+  /* 手机：长按注区 = 右键撤单（原来的 contextmenu 在触屏上按不出来） */
+  (function(){
+    const SEL = '[data-bet],[data-rr],[data-bac],[data-sic]';
+    let timer = null, cell = null, sx = 0, sy = 0, swallowUntil = 0;
+    const clear = () => { if(timer) clearTimeout(timer); timer = null; cell = null; };
+    document.addEventListener('touchstart', ev => {
+      const el = ev.target && ev.target.closest ? ev.target.closest(SEL) : null;
+      if(!el || !ev.touches || !ev.touches[0]) return;
+      cell = el; sx = ev.touches[0].clientX; sy = ev.touches[0].clientY;
+      timer = setTimeout(() => {
+        timer = null;
+        if(!cell) return;
+        swallowUntil = Date.now() + 800;          // 吞掉随后的 click，避免又押一注
+        try{
+          cell.dispatchEvent(new MouseEvent('contextmenu', { bubbles:true, cancelable:true, clientX:sx, clientY:sy }));
+        }catch(e){}
+        if(navigator.vibrate) { try{ navigator.vibrate(12); }catch(e){} }
+        cell = null;
+      }, 450);
+    }, { passive:true });
+    document.addEventListener('touchmove', ev => {
+      if(!timer || !ev.touches || !ev.touches[0]) return;
+      const t = ev.touches[0];
+      if(Math.abs(t.clientX - sx) > 9 || Math.abs(t.clientY - sy) > 9) clear();
+    }, { passive:true });
+    document.addEventListener('touchend', clear, { passive:true });
+    document.addEventListener('touchcancel', clear, { passive:true });
+    document.addEventListener('click', ev => {
+      if(Date.now() < swallowUntil){ ev.stopPropagation(); ev.preventDefault(); }
+    }, true);
+  })();
   refresh(); refreshClock();
-  setInterval(() => { autoCashOut(); bankruptTick(); refreshClock(); }, 900);
-  setInterval(refresh, 2600);
+  setInterval(() => { if(document.hidden) return; autoCashOut(); bankruptTick(); refreshClock(); }, 900);
+  setInterval(() => { if(!document.hidden) refresh(); }, 2600);
+})();
+</script>
+<script>
+/* ============================================================
+   统一帧调度器（省电引擎）
+   所有机台的 requestAnimationFrame 都挂到这里：
+   · 没有任何机台在动时 → 完全停止调度，页面可以真正 idle
+   · 页面切到后台 → 立即停表，回来再续
+   · 单帧 dt 上限 50ms，切回前台不会「补帧爆炸」
+   ============================================================ */
+(function(){
+  'use strict';
+  const jobs = [];
+  let running = false, last = 0, visible = !document.hidden;
+
+  /* 弱机自适应画质：连续掉帧 → 降档 */
+  const QUAL = { level: 2, slow: 0, fast: 0 };
+  const isCoarse = (window.matchMedia && window.matchMedia('(pointer:coarse)').matches) || false;
+  const UA = (typeof navigator !== 'undefined' && navigator.userAgent) || '';
+  const mobile = isCoarse || /Android|iPhone|iPad|iPod|Mobile|HarmonyOS/i.test(UA);
+  QUAL.level = mobile ? 1 : 2;                 // 手机默认中画质
+  QUAL.dpr = mobile ? Math.min(1.5, window.devicePixelRatio || 1) : Math.min(2, window.devicePixelRatio || 1);
+
+  /* 用「每帧实际绘制耗时」判定，和屏幕刷新率无关 */
+  function judge(ms){
+    if(ms > 13){ QUAL.slow++; QUAL.fast = 0; }
+    else if(ms < 6){ QUAL.fast++; QUAL.slow = 0; }
+    else { QUAL.slow = Math.max(0, QUAL.slow - 1); QUAL.fast = Math.max(0, QUAL.fast - 1); }
+    if(QUAL.slow >= 40 && QUAL.level > 0){ QUAL.level--; QUAL.slow = 0; onLevel(); }
+    else if(QUAL.fast >= 600 && QUAL.level < 2){ QUAL.level++; QUAL.fast = 0; onLevel(); }
+  }
+  function onLevel(){
+    if(document.documentElement && document.documentElement.setAttribute)
+      document.documentElement.setAttribute('data-qual', String(QUAL.level));
+    if(window.onQualityChange){ try{ window.onQualityChange(QUAL.level); }catch(e){} }
+  }
+  function tick(now){
+    const dt = Math.min(0.05, Math.max(0, (now - last) / 1000));
+    last = now;
+    let busy = false;
+    const t0 = performance.now();
+    for(let i = 0; i < jobs.length; i++){
+      const j = jobs[i];
+      let on = false;
+      try{ on = j.active(); }catch(e){ on = false; }
+      if(!on) continue;
+      busy = true;
+      const fps = typeof j.fps === 'function' ? j.fps() : j.fps;
+      if(fps < 60 && (now - j.last) < (1000 / fps - 1.6)) continue;   // 空闲机台降到 30fps
+      const jdt = j.last ? Math.min(0.05, Math.max(0, (now - j.last) / 1000)) : dt;
+      j.last = now;
+      try{ j.frame(now, jdt); }catch(e){}
+    }
+    if(busy) judge(performance.now() - t0);
+    if(busy && visible) requestAnimationFrame(tick);
+    else running = false;
+  }
+  function start(){
+    if(running || !visible) return;
+    running = true;
+    last = performance.now();
+    requestAnimationFrame(tick);
+  }
+  const stop = () => { running = false; };
+
+  document.addEventListener('visibilitychange', () => {
+    visible = !document.hidden;
+    if(visible) start(); else stop();
+  });
+  ['pointerdown','keydown','touchstart','input'].forEach(t =>
+    window.addEventListener(t, start, { passive:true }));
+
+  window.ENGINE = {
+    QUAL, mobile,
+    add(key, active, frame, fps){ jobs.push({ key, active, frame, fps: fps || 60, last: 0 }); start(); return key; },
+    start, stop,
+    isRunning: () => running,
+    isBusy: () => jobs.some(j => { try{ return !!j.active(); }catch(e){ return false; } }),
+    setLevel(n){ QUAL.level = Math.max(0, Math.min(2, n)); onLevel(); }
+  };
+  onLevel();
 })();
 </script>
 <script>
@@ -2251,7 +2468,11 @@
     if(AC && AC.state === 'suspended') AC.resume();
     return AC || null;
   }
+  let lastBlip = 0;
   function blip(f, dur, type, vol){
+    const nowT = performance.now();
+    if(nowT - lastBlip < 16) return;        // 手机端限制同时发声数量，避免音频线程过载
+    lastBlip = nowT;
     const a = ac(); if(!a) return;
     const o = a.createOscillator(), g = a.createGain();
     o.type = type || 'triangle'; o.frequency.value = f;
@@ -2295,6 +2516,11 @@
     +   '<button id="m-tip">要提示</button>'
     +   '<button id="m-hide">收起</button>'
     + '</div>';
+  /* 手机屏幕窄：默认收起看板娘，只留底部按钮条，免得挡住机台操作 */
+  if(window.matchMedia && window.matchMedia('(max-width:700px)').matches){
+    dock.classList.add('mini');
+    const hb = $('m-hide'); if(hb) hb.textContent = '展开';
+  }
   let cur = 'sky';
   const aff = { sky:0, saya:0 };
   let typer = null;
@@ -2733,8 +2959,8 @@ function createPachinko(){
   'use strict';
   const eng = createPachinko();
   const cv = document.getElementById('pf');
-  const ctx = cv.getContext('2d');
-  const DPR = Math.min(2, window.devicePixelRatio || 1);
+  let ctx = cv.getContext('2d');
+  const DPR = (window.ENGINE && window.ENGINE.QUAL.dpr) || Math.min(2, window.devicePixelRatio || 1);
   cv.width = eng.CW * DPR; cv.height = eng.CH * DPR;
   cv.style.aspectRatio = eng.CW + ' / ' + eng.CH;
   ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
@@ -2836,14 +3062,26 @@ function createPachinko(){
     for(let i = 0; i < 15; i++) pts.push([62 + i*29.8, 695.4]);
     for(let i = 0; i < 11; i++) pts.push([4.6, 58 + i*57]);
     for(let i = 0; i < 11; i++) pts.push([535.4, 58 + i*57]);
+    /* 亮灯/暗灯各合成一条路径：60 次绘制 → 2 次 */
+    const rr = jack ? 3.2 : 2.5;
+    ctx.beginPath();
     for(let i = 0; i < pts.length; i++){
-      const on = ((step + i) % 6) < 2;
-      ctx.beginPath(); ctx.arc(pts[i][0], pts[i][1], jack ? 3.2 : 2.5, 0, 6.2832);
-      ctx.fillStyle = on ? base : 'rgba(74,104,146,.32)';
-      if(on){ ctx.shadowColor = base; ctx.shadowBlur = jack ? 14 : 9; }
-      ctx.fill();
-      ctx.shadowBlur = 0;
+      if(((step + i) % 6) >= 2) continue;
+      ctx.moveTo(pts[i][0] + rr, pts[i][1]);
+      ctx.arc(pts[i][0], pts[i][1], rr, 0, 6.2832);
     }
+    ctx.fillStyle = base;
+    ctx.shadowColor = base; ctx.shadowBlur = jack ? 14 : 9;
+    ctx.fill();
+    ctx.shadowBlur = 0;
+    ctx.beginPath();
+    for(let i = 0; i < pts.length; i++){
+      if(((step + i) % 6) < 2) continue;
+      ctx.moveTo(pts[i][0] + 2.5, pts[i][1]);
+      ctx.arc(pts[i][0], pts[i][1], 2.5, 0, 6.2832);
+    }
+    ctx.fillStyle = 'rgba(74,104,146,.32)';
+    ctx.fill();
   }
 
   /* ---------------- 图柄抽选（转动判定） ---------------- */
@@ -2961,19 +3199,18 @@ function createPachinko(){
     return true;
   }
 
-  /* ---------------- 主循环 ---------------- */
-  let last = performance.now(), acc = 0;
-  function loop(now){
-    const dt = Math.min(0.05, (now - last)/1000);
-    last = now;
-    if(window.PACH_ACTIVE === false){ requestAnimationFrame(loop); return; }
-    acc += dt;
+  /* ---------------- 主循环（交给统一调度器，空闲即停） ---------------- */
+  let acc = 0;
+  function pachFrame(now, dt){
+    acc = Math.min(acc + dt, 0.2);          // 卡顿后不补帧，避免雪崩
     const FIX = 1/60;
+    const guardMax = window.ENGINE && window.ENGINE.QUAL.level === 0 ? 3 : 5;
     let guard = 0;
-    while(acc >= FIX && guard++ < 6){ acc -= FIX; update(FIX); }
+    while(acc >= FIX && guard++ < guardMax){ acc -= FIX; update(FIX); }
     render();
-    requestAnimationFrame(loop);
   }
+  if(window.ENGINE) window.ENGINE.add('pachinko', () => window.PACH_ACTIVE === true, pachFrame,
+    () => (eng.balls.length > 0 || G.phase !== 'idle' || G.held || G.space || G.auto) ? 60 : 30);
 
   function update(dt){
     /* --- 发射 --- */
@@ -3148,7 +3385,11 @@ function createPachinko(){
   }
 
   function drawWalls(){
-    for(const s of eng.machine.segs){
+    /* 把上百段导轨按「颜色+线宽+明暗」合批成几次描边（原来每段一次 stroke） */
+    const buckets = {};
+    const segs = eng.machine.segs;
+    for(let i = 0; i < segs.length; i++){
+      const s = segs[i];
       const active = segActive(s);
       let col, w;
       switch(s.kind){
@@ -3159,20 +3400,64 @@ function createPachinko(){
         default:      col = '#8899ad'; w = 3;
       }
       if(G.dbg){ col = active ? '#ff3b3b' : '#3344ff'; w = 1; }
-      ctx.globalAlpha = active ? 1 : 0.32;
-      line(s.ax, s.ay, s.bx, s.by, w, col);
-      if(s.kind === 'rail' && !G.dbg) line(s.ax, s.ay, s.bx, s.by, 1.5, 'rgba(255,255,255,.6)');
+      const key = col + '|' + w + '|' + (active ? 1 : 0);
+      (buckets[key] || (buckets[key] = { col, w, a: active ? 1 : 0.32, list: [] })).list.push(s);
+    }
+    for(const key in buckets){
+      const b = buckets[key];
+      ctx.globalAlpha = b.a;
+      ctx.beginPath();
+      for(let i = 0; i < b.list.length; i++){
+        const s = b.list[i];
+        ctx.moveTo(s.ax, s.ay); ctx.lineTo(s.bx, s.by);
+      }
+      ctx.lineWidth = b.w; ctx.strokeStyle = b.col; ctx.lineCap = 'round'; ctx.stroke();
       ctx.globalAlpha = 1;
+    }
+    if(!G.dbg){                       // 导轨高光也合批
+      ctx.beginPath();
+      for(let i = 0; i < segs.length; i++){
+        const s = segs[i];
+        if(s.kind !== 'rail') continue;
+        ctx.moveTo(s.ax, s.ay); ctx.lineTo(s.bx, s.by);
+      }
+      ctx.lineWidth = 1.5; ctx.strokeStyle = 'rgba(255,255,255,.6)'; ctx.lineCap = 'round'; ctx.stroke();
     }
   }
 
   function drawNails(){
-    for(const n of eng.machine.nails){
-      ctx.beginPath(); ctx.arc(n.x, n.y, n.r, 0, 6.2832);
-      ctx.fillStyle = '#d7e1ef'; ctx.fill();
-      ctx.beginPath(); ctx.arc(n.x - n.r*0.3, n.y - n.r*0.35, n.r*0.42, 0, 6.2832);
-      ctx.fillStyle = '#fff'; ctx.fill();
+    /* 全部钉子合成两条路径：437 颗钉子从 874 次绘制降到 2 次 */
+    const nails = eng.machine.nails;
+    ctx.beginPath();
+    for(let i = 0; i < nails.length; i++){
+      const n = nails[i];
+      ctx.moveTo(n.x + n.r, n.y);
+      ctx.arc(n.x, n.y, n.r, 0, 6.2832);
     }
+    ctx.fillStyle = '#d7e1ef'; ctx.fill();
+    ctx.beginPath();
+    for(let i = 0; i < nails.length; i++){
+      const n = nails[i], r = n.r*0.42, hx = n.x - n.r*0.3, hy = n.y - n.r*0.35;
+      ctx.moveTo(hx + r, hy);
+      ctx.arc(hx, hy, r, 0, 6.2832);
+    }
+    ctx.fillStyle = '#fff'; ctx.fill();
+  }
+
+  /* 静态层缓存：场地渐变/射线/水波/螺旋一次性画好，逐帧直接贴图 */
+  const bgCv = document.createElement('canvas');
+  let bgReady = false;
+  function buildBg(){
+    if(bgReady) return;
+    bgCv.width = Math.round(540*DPR); bgCv.height = Math.round(820*DPR);
+    const bctx = bgCv.getContext('2d');
+    if(!bctx) return;
+    bctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+    const keep = ctx;
+    ctx = bctx;                       // 复用同一套绘制函数，画到离屏画布
+    drawField();
+    ctx = keep;
+    bgReady = true;
   }
 
   function drawWindmill(){
@@ -3417,10 +3702,13 @@ function createPachinko(){
     ctx.beginPath(); ctx.arc(KX, KY, 46, 0, 6.2832); ctx.fillStyle = kg; ctx.fill();
     ctx.strokeStyle = '#5d7dab'; ctx.lineWidth = 2; ctx.stroke();
     ctx.save(); ctx.translate(KX, KY);
+    ctx.beginPath();
     for(let i = 0; i < 24; i++){
-      ctx.rotate(6.2832/24);
-      line(37, 0, 44, 0, 2, 'rgba(255,255,255,.10)');
+      const a = i*6.2832/24, c = Math.cos(a), sn = Math.sin(a);
+      ctx.moveTo(37*c, 37*sn); ctx.lineTo(44*c, 44*sn);
     }
+    ctx.lineWidth = 2; ctx.strokeStyle = 'rgba(255,255,255,.10)';
+    ctx.lineCap = 'round'; ctx.stroke();
     ctx.restore();
     const ang = (-160 + G.power*140) * Math.PI/180;
     line(KX, KY, KX + Math.cos(ang)*40, KY + Math.sin(ang)*40, 6, '#ffd166');
@@ -3451,7 +3739,9 @@ function createPachinko(){
     const sk = G.shake > 0 ? G.shake*6 : 0;
     ctx.save();
     if(sk) ctx.translate((Math.random()-0.5)*sk, (Math.random()-0.5)*sk);
-    drawField();
+    if(!bgReady) buildBg();
+    if(bgReady) ctx.drawImage(bgCv, 0, 0, 540, 820);
+    else drawField();
     drawLeds();
     drawPockets();
     drawWalls();
@@ -3586,7 +3876,6 @@ function createPachinko(){
     toast('机台已重置', 1500);
   };
 
-  requestAnimationFrame(loop);
   setTimeout(() => toast('先用「借球」或「练习（无限球）」— 转动发射旋钮开始吧', 3600), 400);
   window.pachinko = {G, eng, cashOut, rent};   // 调试用钩子
 })();
@@ -3615,6 +3904,7 @@ function createPachinko(){
     window.SLOT_ACTIVE = (target === 'slot');
     window.WHEEL_ACTIVE = (target === 'wheel');
     window.CASINO_ACTIVE = ['blackjack','roulette','poker','craps','holdem','rr','baccarat','sicbo','keno'].indexOf(target) >= 0 ? target : null;
+    if(window.ENGINE) window.ENGINE.start();      // 唤醒引擎（切屏时重新起帧）
     if(window.onScreenChange) window.onScreenChange(target);
     if(target === 'lobby') refreshLobby();
     if(window.scrollTo) window.scrollTo({ top:0, behavior:'smooth' });
@@ -3647,8 +3937,8 @@ function createPachinko(){
 
   /* ---------------- 老虎机 ---------------- */
   const cv = $('slotcv');
-  const ctx = cv.getContext('2d');
-  const DPR = Math.min(2, window.devicePixelRatio || 1);
+  let ctx = cv.getContext('2d');
+  const DPR = (window.ENGINE && window.ENGINE.QUAL.dpr) || Math.min(2, window.devicePixelRatio || 1);
   const SW = 560, SH = 470;
   cv.width = SW*DPR; cv.height = SH*DPR;
   cv.style.aspectRatio = SW + ' / ' + SH;
@@ -3686,8 +3976,12 @@ function createPachinko(){
     if(AC && AC.state === 'suspended') AC.resume();
     return AC || null;
   }
+  let lastBeep = 0;
   function beep(f, dur, type, vol){
     if(S.muted) return;
+    const nowT = performance.now();
+    if(nowT - lastBeep < 16) return;        // 限制同时发声数量，手机端更省电
+    lastBeep = nowT;
     const a = ac(); if(!a) return;
     const o = a.createOscillator(), g = a.createGain();
     o.type = type || 'square'; o.frequency.value = f;
@@ -3974,6 +4268,31 @@ function createPachinko(){
   }
 
   /* ---- 卷轴与画面 ---- */
+  /* 图案精灵缓存：7 种图案只画一次，之后逐帧贴图（原先每帧要重画 45 次图形） */
+  const SYM_SPR = {};
+  function symSprite(type){
+    if(SYM_SPR[type] !== undefined) return SYM_SPR[type];
+    const SZ = 168, S0 = SZ / 1.44;
+    const c = document.createElement('canvas');
+    c.width = SZ; c.height = SZ;
+    const g2 = c.getContext('2d');
+    if(!g2){ SYM_SPR[type] = null; return null; }
+    const keep = ctx;
+    ctx = g2;
+    try{ drawSymbol(type, SZ/2, SZ/2, S0, 1); }catch(e){}
+    ctx = keep;
+    SYM_SPR[type] = { cv: c, sz: SZ, s0: S0 };
+    return SYM_SPR[type];
+  }
+  function blitSymbol(type, cx, cy, size, alpha){
+    const sp = symSprite(type);
+    if(!sp){ drawSymbol(type, cx, cy, size, alpha); return; }
+    const w = sp.sz * (size / sp.s0);
+    const keep = ctx.globalAlpha;
+    ctx.globalAlpha = keep * (alpha == null ? 1 : alpha);
+    ctx.drawImage(sp.cv, cx - w/2, cy - w/2, w, w);
+    ctx.globalAlpha = keep;
+  }
   function roundRect(x,y,w,h,r){
     ctx.beginPath();
     ctx.moveTo(x+r,y);
@@ -4000,7 +4319,7 @@ function createPachinko(){
         const base = Math.floor(pos), frac = pos - base;
         const y = WIN.y + row*RH - frac*RH + RH/2;
         const idx = ((base + row) % L + L) % L;
-        drawSymbol(STRIPS[r][idx], WIN.x + r*RW + RW/2, y, Math.min(RW,RH)*0.84, blur ? 0.5 : 1);
+        blitSymbol(STRIPS[r][idx], WIN.x + r*RW + RW/2, y, Math.min(RW,RH)*0.84, blur ? 0.5 : 1);
       }
     }
     const sg = ctx.createLinearGradient(WIN.x + r*RW, 0, WIN.x + (r+1)*RW, 0);
@@ -4177,11 +4496,7 @@ function createPachinko(){
   }
 
   /* ---- 主循环 ---- */
-  let lastS = performance.now();
-  function loopSlot(now){
-    const dt = Math.min(0.05, (now - lastS)/1000);
-    lastS = now;
-    if(window.SLOT_ACTIVE !== true){ requestAnimationFrame(loopSlot); return; }
+  function loopSlot(now, dt){
     S.t += dt;
     if(S.msgT > 0) S.msgT -= dt;
     if(S.flash > 0) S.flash = Math.max(0, S.flash - dt*1.6);
@@ -4213,7 +4528,6 @@ function createPachinko(){
     }
     if(S.phase === 'settle' && !S.anim[0] && !S.anim[1] && !S.anim[2]) evaluate();
     renderSlot();
-    requestAnimationFrame(loopSlot);
   }
 
   /* ---- 面板 ---- */
@@ -4247,7 +4561,7 @@ function createPachinko(){
       btn.classList.toggle('ready', !!(S.assist && S.phase === 'spin' && S.moving[i] && canPullNow(i)));
     }
   }
-  setInterval(updateSlotHud, 120);
+  setInterval(() => { if(!document.hidden && window.SLOT_ACTIVE === true) updateSlotHud(); }, 140);
 
   /* ---- 事件 ---- */
   function bind(id, fn){ const e = $(id); if(e) e.onclick = fn; }
@@ -4314,7 +4628,8 @@ function createPachinko(){
     if(k === 'z'){ stopAll(); e.preventDefault(); }
   });
 
-  requestAnimationFrame(loopSlot);
+  if(window.ENGINE) window.ENGINE.add('slot', () => window.SLOT_ACTIVE === true, loopSlot,
+    () => (S.phase === 'idle' && !S.coins.length && !S.flash && !S.shake) ? 30 : 60);
   refreshLobby();
   window.gotoScreen = go;
 })();
@@ -4329,8 +4644,8 @@ function createPachinko(){
   const USD = window.USD || (c => '$' + (c/100).toFixed(2));
   const cv = $('wheelcv');
   if(!cv) return;
-  const ctx = cv.getContext('2d');
-  const DPR = Math.min(2, window.devicePixelRatio || 1);
+  let ctx = cv.getContext('2d');
+  const DPR = (window.ENGINE && window.ENGINE.QUAL.dpr) || Math.min(2, window.devicePixelRatio || 1);
   const CW = 620, CH = 660;
   cv.width = CW*DPR; cv.height = CH*DPR;
   cv.style.aspectRatio = CW + ' / ' + CH;
@@ -4369,8 +4684,12 @@ function createPachinko(){
     if(AC && AC.state === 'suspended') AC.resume();
     return AC || null;
   }
+  let lastBeepW = 0;
   function beep(f, dur, type, vol){
     if(G.muted) return;
+    const nowT = performance.now();
+    if(nowT - lastBeepW < 16) return;
+    lastBeepW = nowT;
     const a = ac(); if(!a) return;
     const o = a.createOscillator(), g = a.createGain();
     o.type = type || 'square'; o.frequency.value = f;
@@ -4655,6 +4974,27 @@ function createPachinko(){
     ctx.fillStyle = '#120303'; ctx.fill();
     ctx.save();
     ctx.translate(CX, CY); ctx.rotate(G.ang);
+    const disc = wheelDisc();
+    if(disc) ctx.drawImage(disc, -CX, -CY, CW, CH);
+    else drawWheelSegs(false);
+    if(G.winIdx >= 0 && G.winFlash > 0){
+      const a0 = G.winIdx*STEP, a1 = (G.winIdx+1)*STEP;
+      ctx.save();
+      ctx.globalAlpha = Math.min(1, G.winFlash)*(0.35 + 0.45*Math.abs(Math.sin(G.t*9)));
+      ctx.beginPath();
+      ctx.arc(0, 0, R_OUT, a0, a1);
+      ctx.arc(0, 0, R_IN, a1, a0, true);
+      ctx.closePath();
+      ctx.fillStyle = '#ffffff'; ctx.fill();
+      ctx.restore();
+    }
+    ctx.restore();
+    drawWheelTail();
+  }
+  /* 转盘盘面（扇形+图案）烘焙成一张图：每帧只贴一次图，省掉 24 个渐变与 24 次图案绘制 */
+  const discCv = document.createElement('canvas');
+  let discReady = false;
+  function drawWheelSegs(withFlash){
     for(let i = 0; i < N; i++){
       const a0 = i*STEP, a1 = (i+1)*STEP;
       const sym = SMAP[ORDER[i]];
@@ -4682,7 +5022,22 @@ function createPachinko(){
         ctx.restore();
       }
     }
-    ctx.restore();
+  }
+  function wheelDisc(){
+    if(discReady) return discCv;
+    discCv.width = Math.round(CW*DPR); discCv.height = Math.round(CH*DPR);
+    const dctx = discCv.getContext('2d');
+    if(!dctx) return null;
+    dctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+    const keep = ctx;
+    ctx = dctx;
+    ctx.translate(CX, CY);
+    drawWheelSegs(false);
+    ctx = keep;
+    discReady = true;
+    return discCv;
+  }
+  function drawWheelTail(){
     const lit = (G.phase === 'spin') ? (Math.floor(G.t*26) % N) : -1;
     for(let i = 0; i < N; i++){
       const a = i*STEP + STEP/2 + G.ang;
@@ -4752,11 +5107,7 @@ function createPachinko(){
   }
 
   /* ---- 主循环 / 事件 ---- */
-  let lastW = performance.now();
-  function loopWheel(now){
-    const dt = Math.min(0.05, (now - lastW)/1000);
-    lastW = now;
-    if(window.WHEEL_ACTIVE !== true){ requestAnimationFrame(loopWheel); return; }
+  function loopWheel(now, dt){
     G.t += dt;
     if(G.msgT > 0) G.msgT -= dt;
     if(G.winFlash > 0) G.winFlash = Math.max(0, G.winFlash - dt*0.5);
@@ -4777,7 +5128,6 @@ function createPachinko(){
       if(k >= 1) settle();
     }
     drawWheel();
-    requestAnimationFrame(loopWheel);
   }
   function topup(cents){
     const n = Math.floor(cents/G.rate);
@@ -4844,8 +5194,9 @@ function createPachinko(){
   buildCards();
   buildPaytable();
   syncCards();
-  setInterval(updateWHud, 150);
-  requestAnimationFrame(loopWheel);
+  setInterval(() => { if(!document.hidden && window.WHEEL_ACTIVE === true) updateWHud(); }, 160);
+  if(window.ENGINE) window.ENGINE.add('wheel', () => window.WHEEL_ACTIVE === true, loopWheel,
+    () => (G.phase === 'spin' || G.coins.length || G.winFlash > 0) ? 60 : 30);
 })();
 </script>
 <script>
@@ -4911,8 +5262,12 @@ function createPachinko(){
     if(AC && AC.state === 'suspended') AC.resume();
     return AC || null;
   }
+  let lastBeepC = 0;
   function beep(f, dur, type, vol){
     if(C.muted) return;
+    const nowT = performance.now();
+    if(nowT - lastBeepC < 16) return;
+    lastBeepC = nowT;
     const a = ac(); if(!a) return;
     const o = a.createOscillator(), g = a.createGain();
     o.type = type || 'square'; o.frequency.value = f;
@@ -5422,10 +5777,12 @@ function createPachinko(){
     rlPaint();
     setTimeout(() => { RL.phase = 'idle'; RL.win = null; rlPaint(); }, 2200);
   }
-  const RLCV = $('rl-wheel'), RLX = RLCV ? RLCV.getContext('2d') : null;
+  const RLCV = $('rl-wheel');
+  let RLX = RLCV ? RLCV.getContext('2d') : null;
   const RLW = 620, RLH = 300, RCX = 310, RCY = 150, RRO = 128, RRI = 78;
+  const RLDPR = (window.ENGINE && window.ENGINE.QUAL.dpr) || Math.min(2, window.devicePixelRatio || 1);
   if(RLCV){
-    const dpr = Math.min(2, window.devicePixelRatio || 1);
+    const dpr = RLDPR;
     RLCV.width = RLW*dpr; RLCV.height = RLH*dpr;
     RLCV.style.aspectRatio = RLW + ' / ' + RLH;
     RLX.setTransform(dpr, 0, 0, dpr, 0, 0);
@@ -5436,8 +5793,29 @@ function createPachinko(){
     const g = RLX.createRadialGradient(RCX, RCY, 20, RCX, RCY, RRO + 40);
     g.addColorStop(0,'#12351f'); g.addColorStop(1,'#050f0a');
     RLX.fillStyle = g; RLX.fillRect(0, 0, RLW, RLH);
-    const step = Math.PI*2/38;
     RLX.save(); RLX.translate(RCX, RCY); RLX.rotate(RL.ang);
+    const rdisc = rlDisc();
+    if(rdisc) RLX.drawImage(rdisc, -RCX, -RCY, RLW, RLH);
+    else rlDrawDisc();
+    RLX.restore();
+    RLX.beginPath(); RLX.arc(RCX, RCY, RRI, 0, 6.2832);
+    RLX.fillStyle = '#0a2016'; RLX.fill();
+    RLX.strokeStyle = 'url(#gGold)'; RLX.lineWidth = 4; RLX.stroke();
+    RLX.beginPath(); RLX.arc(RCX, RCY, 9, 0, 6.2832);
+    RLX.fillStyle = '#ffd166'; RLX.fill();
+    const bx = RCX + Math.cos(RL.ball)*RRO*0.82, by = RCY + Math.sin(RL.ball)*RRO*0.82;
+    RLX.beginPath(); RLX.arc(bx, by, 5.5, 0, 6.2832);
+    RLX.fillStyle = '#fff'; RLX.shadowColor = '#fff'; RLX.shadowBlur = 12; RLX.fill(); RLX.shadowBlur = 0;
+    RLX.fillStyle = '#cfe9dc'; RLX.font = '700 13px "Microsoft YaHei",sans-serif';
+    RLX.textAlign = 'center';
+    RLX.fillText(RL.phase === 'spin' ? '转动中…' : (RL.win !== null ? '落点：' + RL.win : '押注后按「转动轮盘」'), RCX, RLH - 14);
+    RLX.textAlign = 'left';
+  }
+  /* 轮盘盘面（38 格 + 数字）烘焙成一张图，每帧只贴图 */
+  const rlDiscCv = document.createElement('canvas');
+  let rlDiscReady = false;
+  function rlDrawDisc(){
+    const step = Math.PI*2/38;
     for(let i = 0; i < 38; i++){
       const n = RL_ORDER[i];
       const a0 = i*step, a1 = (i+1)*step;
@@ -5456,40 +5834,36 @@ function createPachinko(){
       RLX.fillText(String(n), 0, 0);
       RLX.restore();
     }
-    RLX.restore();
-    RLX.beginPath(); RLX.arc(RCX, RCY, RRI, 0, 6.2832);
-    RLX.fillStyle = '#0a2016'; RLX.fill();
-    RLX.strokeStyle = 'url(#gGold)'; RLX.lineWidth = 4; RLX.stroke();
-    RLX.beginPath(); RLX.arc(RCX, RCY, 9, 0, 6.2832);
-    RLX.fillStyle = '#ffd166'; RLX.fill();
-    const bx = RCX + Math.cos(RL.ball)*RRO*0.82, by = RCY + Math.sin(RL.ball)*RRO*0.82;
-    RLX.beginPath(); RLX.arc(bx, by, 5.5, 0, 6.2832);
-    RLX.fillStyle = '#fff'; RLX.shadowColor = '#fff'; RLX.shadowBlur = 12; RLX.fill(); RLX.shadowBlur = 0;
-    RLX.fillStyle = '#cfe9dc'; RLX.font = '700 13px "Microsoft YaHei",sans-serif';
-    RLX.textAlign = 'center';
-    RLX.fillText(RL.phase === 'spin' ? '转动中…' : (RL.win !== null ? '落点：' + RL.win : '押注后按「转动轮盘」'), RCX, RLH - 14);
-    RLX.textAlign = 'left';
   }
-  let rlLast = performance.now();
-  function rlLoop(now){
-    const dt = Math.min(0.05, (now - rlLast)/1000);
-    rlLast = now;
-    if(window.CASINO_ACTIVE === 'roulette'){
-      if(RL.spin){
-        const s = RL.spin;
-        s.t += dt;
-        const k = Math.min(1, s.t/s.dur);
-        const e = 1 - Math.pow(1-k, 2.4);
-        RL.ang = s.from + (Math.PI*2*s.turns + (Math.PI*1.5 - (s.k + 0.5)*(Math.PI*2/38)) - (s.from % (Math.PI*2))) * e;
-        RL.ball = -Math.PI/2 + Math.sin(k*7) * (1 - k*0.6);
-        if(Math.random() < 0.25) beep(1100 + Math.random()*400, 0.02, 'square', 0.015);
-        if(k >= 1){ RL.spin = null; rlSettle(); }
-      } else {
-        RL.ball += dt*0.4;
-      }
-      rlDraw();
+  function rlDisc(){
+    if(rlDiscReady) return rlDiscCv;
+    rlDiscCv.width = Math.round(RLW*RLDPR); rlDiscCv.height = Math.round(RLH*RLDPR);
+    const dctx = rlDiscCv.getContext('2d');
+    if(!dctx) return null;
+    dctx.setTransform(RLDPR, 0, 0, RLDPR, 0, 0);
+    const keep = RLX;
+    RLX = dctx;
+    RLX.translate(RCX, RCY);
+    rlDrawDisc();
+    RLX = keep;
+    rlDiscReady = true;
+    return rlDiscCv;
+  }
+  function rlLoop(now, dt){
+    if(RL.spin){
+      const s = RL.spin;
+      s.t += dt;
+      const k = Math.min(1, s.t/s.dur);
+      const e = 1 - Math.pow(1-k, 2.4);
+      RL.ang = s.from + (Math.PI*2*s.turns + (Math.PI*1.5 - (s.k + 0.5)*(Math.PI*2/38)) - (s.from % (Math.PI*2))) * e;
+      RL.ball = -Math.PI/2 + Math.sin(k*7) * (1 - k*0.6);
+      if(Math.random() < 0.25) beep(1100 + Math.random()*400, 0.02, 'square', 0.015);
+      if(k >= 1){ RL.spin = null; rlSettle(); }
+    } else {
+      RL.ball += dt*0.4;
+      if(RL.ball > 6.2832) RL.ball -= 6.2832;
     }
-    requestAnimationFrame(rlLoop);
+    rlDraw();
   }
   rlBuild();
   chipRow($('rl-chips'), [1, 5, 25, 100], v => {
@@ -5510,7 +5884,8 @@ function createPachinko(){
     const lg = $('rl-log'); if(lg) lg.innerHTML = '';
     RL.win = null; rlPaint();
   };
-  requestAnimationFrame(rlLoop);
+  if(window.ENGINE) window.ENGINE.add('roulette', () => window.CASINO_ACTIVE === 'roulette', rlLoop,
+    () => RL.spin ? 60 : 30);
   rlPaint();
 
   /* ================= 视频扑克 ================= */
@@ -6340,13 +6715,9 @@ function createPachinko(){
     if(RR.phase === 'pay') RRX.fillText('第 ' + RR.pos + ' 发打响', RR_CX, 22);
     RRX.textAlign = 'left';
   }
-  let rrLast = performance.now();
-  function rrLoop(now){
-    const dt = Math.min(0.05, (now - rrLast)/1000);
-    rrLast = now;
-    if(window.CASINO_ACTIVE === 'rr'){ rrUpdate(dt); rrDraw(); }
-    requestAnimationFrame(rrLoop);
-  }
+  function rrLoop(now, dt){ rrUpdate(dt); rrDraw(); }
+  if(window.ENGINE) window.ENGINE.add('rr', () => window.CASINO_ACTIVE === 'rr', rrLoop,
+    () => RR.phase === 'idle' ? 30 : 60);
   rrBuild();
   chipRow($('rr-chips'), [1, 5, 25, 100], v => {
     RR.unit = v;
@@ -6371,7 +6742,6 @@ function createPachinko(){
     RR.chambers = [false,false,false,false,false,false];
     rrPaint();
   };
-  requestAnimationFrame(rrLoop);
   rrPaint();
   if($('th-deal')) $('th-deal').onclick = thNew;
   if($('th-fold')) $('th-fold').onclick = () => { if(TH.actor === 0 && TH.phase !== 'idle' && TH.phase !== 'show') thAct(0, 'fold'); };
@@ -6844,7 +7214,7 @@ function createPachinko(){
       sicPaint();
     }, 2600);
   }
-  function sicLoop(now){
+  function sicLoop(now, dt){
     if(SIC.phase === 'roll'){
       if(now >= SIC.rollStop) sicSettle();
       else if(now - SIC.tick > 85){
@@ -6856,8 +7226,9 @@ function createPachinko(){
         beep(560 + Math.random()*420, 0.02, 'square', 0.014);
       }
     }
-    requestAnimationFrame(sicLoop);
   }
+  if(window.ENGINE) window.ENGINE.add('sicbo', () => window.CASINO_ACTIVE === 'sicbo' || SIC.phase === 'roll', sicLoop,
+    () => SIC.phase === 'roll' ? 60 : 30);
   sicBuild();
   sicDiceRender();
   sicPaint();
@@ -6875,7 +7246,6 @@ function createPachinko(){
     const lg = $('sic-log'); if(lg) lg.innerHTML = '';
     sicDiceRender(); sicPaint();
   };
-  requestAnimationFrame(sicLoop);
   window.addEventListener('keydown', e => {
     if(window.CASINO_ACTIVE !== 'sicbo') return;
     if(e.code === 'Space'){ sicRoll(); e.preventDefault(); }
