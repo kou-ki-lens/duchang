@@ -397,6 +397,18 @@
   /* #rl-grid 原本同时带着 .numgrid（自己是 13 列网格），内部又被 rlBuild 塞进两个子网格，
      结果两个子网格各被挤进 1 列（手机上只剩 ~20px 宽，号码全部重叠）。这里让它退回普通容器。 */
   #rl-grid{display:block}
+  /* 手指刀锋：倍率阶梯 */
+  .fil-ladder{display:grid;grid-template-columns:repeat(10,1fr);gap:4px;margin-top:12px}
+  .fil-step{
+    border-radius:8px;border:1px solid #ffffff1f;background:#0b1a16;padding:5px 2px;text-align:center;
+    font-size:10.5px;color:#9fc0b3;transition:.18s
+  }
+  .fil-step b{display:block;font-size:12px;color:#8ff0c8;margin-top:2px;font-variant-numeric:tabular-nums}
+  .fil-step.on{border-color:#ffd166;background:#ffd1661f;color:#ffe9ab;box-shadow:0 0 14px #ffd1664d}
+  .fil-step.on b{color:#ffd166}
+  .fil-step.done{border-color:#41c37a66;background:#41c37a14}
+  .fil-step.done b{color:#7dffb0}
+  #fil-cv{width:100%;display:block;border-radius:16px;background:#0a0d12;touch-action:none}
   .nc{
     position:relative;aspect-ratio:1.5/1;border-radius:6px;border:1px solid #ffffff26;cursor:pointer;
     display:grid;place-items:center;font-size:11.5px;font-weight:700;color:#fff;background:#0f3a2a;
@@ -912,6 +924,23 @@
     .pcard{width:52px;height:74px}
     .pcard .r{font-size:14px}
     .pcard .s{font-size:18px}
+    /* 对家座位：3 列在窄屏会被「3 张小牌」的 min-content 顶宽（430px 时溢出约 84px），
+       这里给列加 minmax(0,1fr) 允许收缩，并让牌随视口缩放，保证永远装在赌桌里 */
+    .th-seats{grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;margin-top:16px}
+    .seat{padding:6px;border-radius:12px;min-width:0;overflow:hidden}
+    .seat .sn{font-size:11px}
+    .seat .sc{gap:4px;min-height:44px;flex-wrap:wrap}
+    .seat .sb{font-size:10px;line-height:1.35;min-height:12px;word-break:break-word}
+    .pcard.tiny{width:clamp(22px,6.9vw,32px);height:clamp(32px,10vw,46px);padding:2px 3px;border-radius:5px}
+    .pcard.tiny .r{font-size:9.5px}
+    .pcard.tiny .s{font-size:11px}
+    /* 手指刀锋倍率阶梯：10 列在窄屏每格只剩 25px，文字要折成两三行；改 5×2 更好读 */
+    .fil-ladder{grid-template-columns:repeat(5,1fr);gap:6px}
+    .fil-step{padding:4px 3px;font-size:10.5px}
+    .fil-step b{font-size:11px;margin-top:1px}
+    /* 夜之角两张桌子：桌面内联 min-height 是给宽屏留的，窄屏会留出一大片空桌布 */
+    #scr-zjh .felt{min-height:340px!important}
+    #scr-fillet .felt{min-height:360px!important}
     .chip{width:44px;height:44px;font-size:11px}
     .abtn{padding:9px 12px;font-size:12.5px;min-width:62px}
     .paytable{padding:10px}
@@ -1011,13 +1040,15 @@
   <symbol id="i-bac" viewBox="0 0 24 24"><rect x="4" y="4.6" width="9.6" height="13.4" rx="1.8" transform="rotate(-11 8.8 11.3)" fill="#f2f6fc" stroke="#9fb0c4" stroke-width=".8"/><rect x="9.6" y="5" width="9.8" height="13.8" rx="1.8" fill="#ffffff" stroke="#9fb0c4" stroke-width=".8"/><text x="14.5" y="12" font-size="6" font-weight="700" text-anchor="middle" fill="#b3242e">9</text><text x="14.5" y="17.6" font-size="5.6" text-anchor="middle" fill="#1b1b22">♦</text><circle cx="5.6" cy="19.6" r="2.4" fill="url(#gGold)" stroke="#8a5b00" stroke-width=".6"/></symbol>
   <symbol id="i-sic" viewBox="0 0 24 24"><g stroke="#8fa3bd" stroke-width=".9"><rect x="1.6" y="7.2" width="9" height="9" rx="2.2" fill="#f7f9fd"/><rect x="7.4" y="3.2" width="9" height="9" rx="2.2" fill="#ffffff"/><rect x="13.2" y="9" width="9" height="9" rx="2.2" fill="#eef2f8"/></g><g fill="#14181f"><circle cx="6.1" cy="11.7" r="1.5"/><circle cx="10.2" cy="6" r="1.35"/><circle cx="13.6" cy="9.4" r="1.35"/><circle cx="9.6" cy="6.4" r="1.35"/><circle cx="15.6" cy="11.4" r="1.35"/><circle cx="19.8" cy="15.6" r="1.35"/></g></symbol>
   <symbol id="i-ken" viewBox="0 0 24 24"><rect x="1.8" y="3" width="20.4" height="18" rx="3.6" fill="#0f3a2a" stroke="#4fd6a0" stroke-width="1"/><g fill="#6fe3b4"><circle cx="6" cy="7.4" r="1.35"/><circle cx="12" cy="7.4" r="1.35"/><circle cx="18" cy="7.4" r="1.35"/><circle cx="6" cy="12" r="1.35"/><circle cx="12" cy="12" r="1.35"/><circle cx="18" cy="12" r="1.35"/><circle cx="6" cy="16.6" r="1.35"/><circle cx="12" cy="16.6" r="1.35"/><circle cx="18" cy="16.6" r="1.35"/></g><circle cx="12" cy="12" r="3.2" fill="none" stroke="url(#gGold)" stroke-width="1.9"/></symbol>
+  <symbol id="i-zjh" viewBox="0 0 24 24"><rect x="1.6" y="1.6" width="20.8" height="20.8" rx="5.6" fill="url(#gTile)" stroke="#3d5372" stroke-width="1"/><g stroke="#8fa3bd" stroke-width=".8"><rect x="2.8" y="7.6" width="7.4" height="10.4" rx="1.6" transform="rotate(-14 6.5 12.8)" fill="#eef3fa"/><rect x="5.6" y="6.6" width="7.4" height="10.4" rx="1.6" fill="#ffffff"/><rect x="8.4" y="7.2" width="7.4" height="10.4" rx="1.6" transform="rotate(14 12 12.4)" fill="#f7f9fd"/></g><text x="9.3" y="13.6" font-size="5.2" font-weight="800" text-anchor="middle" fill="#d3232e">A</text><text x="8.3" y="17.6" font-size="4.6" text-anchor="middle" fill="#14181f">♠</text><text x="14.4" y="13.2" font-size="5.2" font-weight="800" text-anchor="middle" fill="#d3232e">A</text><circle cx="18" cy="18" r="3.4" fill="url(#gGold)" stroke="#8a5b00" stroke-width=".7"/></symbol>
+  <symbol id="i-knife" viewBox="0 0 24 24"><rect x="1.6" y="1.6" width="20.8" height="20.8" rx="5.6" fill="url(#gTile)" stroke="#3d5372" stroke-width="1"/><g fill="#e8eef8"><rect x="7.2" y="14.6" width="1.9" height="6.2" rx=".9"/><rect x="10.1" y="14.6" width="1.9" height="6.2" rx=".9"/><rect x="13" y="14.6" width="1.9" height="6.2" rx=".9"/><rect x="15.9" y="14.6" width="1.9" height="6.2" rx=".9"/></g><path d="M12 2.4 L14.2 6.2 L9.8 6.2 Z" fill="url(#gChrome)"/><path d="M9.8 6.2h4.4l-1.4 9.4h-1.6z" fill="#f2f7ff" stroke="#9fb0c4" stroke-width=".6"/><path d="M8.8 15.6h6.4l-3.2 6.6z" fill="url(#gRed)" stroke="#8b0016" stroke-width=".6"/><rect x="4.6" y="13.2" width="14.8" height="1.6" rx=".8" fill="#59d3a0"/></symbol>
 </defs></svg>
 
 <header class="topbar">
   <div class="brand">
     <svg viewBox="0 0 24 24"><use href="#i-slot"/></svg>
     <b>KouKi&#39;s 赌场</b>
-    <span>12 台机台 ・ 美元结算 ・ 玩法照搬现实规则</span>
+    <span>14 台机台 ・ 美元结算 ・ 玩法照搬现实规则</span>
   </div>
   <div class="wstrip" id="w-strip">
     <span class="wpill">现金 <b id="w-cash">$500</b></span>
@@ -1040,6 +1071,8 @@
     <button class="tab" data-go="baccarat"><svg viewBox="0 0 24 24"><use href="#i-bac"/></svg>百家乐</button>
     <button class="tab" data-go="sicbo"><svg viewBox="0 0 24 24"><use href="#i-sic"/></svg>骰宝</button>
     <button class="tab" data-go="keno"><svg viewBox="0 0 24 24"><use href="#i-ken"/></svg>基诺</button>
+    <button class="tab" data-go="zjh"><svg viewBox="0 0 24 24"><use href="#i-zjh"/></svg>炸金花</button>
+    <button class="tab" data-go="fillet"><svg viewBox="0 0 24 24"><use href="#i-knife"/></svg>手指刀锋</button>
   </nav>
 </header>
 
@@ -1051,7 +1084,7 @@
         <div class="hero-badge">EST. 2026 ・ 全美元结算 ・ 真机规格配平</div>
         <h1 class="casino-sign"><em>KouKi&#39;s</em>赌 场<span>CASINO</span></h1>
         <div class="marquee" id="hero-marquee"></div>
-        <p>十二台机台：柏青哥、老虎机、转盘、21 点、轮盘、视频扑克、双骰、德州扑克、六弹舱、百家乐、骰宝、基诺。
+        <p>十四台机台：柏青哥、老虎机、转盘、21 点、轮盘、视频扑克、双骰、德州扑克、六弹舱、百家乐、骰宝、基诺，夜之角还有炸金花与手指刀锋。
            全场 1 筹码 = $1，统一从你的钱包结算：开局 <em data-const="initCash" style="font-style:normal">$500</em>、贷款额度 <em data-const="loanLimit" style="font-style:normal">$5,000</em>，每天签到 <em data-const="checkinUSD" style="font-style:normal">$1,000</em>。</p>
         <p class="hero-guide" id="hero-guide"></p>
       </div>
@@ -1065,7 +1098,7 @@
       </div>
     </div>
     <div class="casino-group">
-    <div class="group-head"><h2>全 部 机 台</h2><i></i><em>12 台 ・ 美元结算 ・ 玩法照搬现实规则</em></div>
+    <div class="group-head"><h2>全 部 机 台</h2><i></i><em>14 台 ・ 美元结算 ・ 玩法照搬现实规则</em></div>
     <div class="cards">
       <button class="card-btn pach" data-go="pachinko">
         <div class="card-art">
@@ -1176,7 +1209,7 @@
         <div>
           <h3>KouKi&#39;s 赌场 · 玩家钱包</h3>
           <p>全场只有一本账：<b>钱包现金</b>。每位玩家开局 <b data-const="initCash">$500</b>，贷款额度 <b data-const="loanLimit">$5,000</b>（无利息，随借随还）；
-             12 台机台都从钱包扣款、派彩直接进钱包。每天可<b>签到领 <span data-const="checkinUSD">$1,000</span></b>；身上有贷款时，每次进账会自动以
+             14 台机台都从钱包扣款、派彩直接进钱包。每天可<b>签到领 <span data-const="checkinUSD">$1,000</span></b>；身上有贷款时，每次进账会自动以
              <b><span data-const="repayP">10</span>% 还贷</b>；当「现金＋可借额度」≤ <span data-const="brokeLimit">$10</span> 判定破产，此时有
              <b><span data-const="reliefP">70</span>%</b> 概率拿到 <b><span data-const="reliefUSD">$100</span> 救济金</b>。
              柏青哥／老虎机／转盘可在机台按「兑现」换回现金，离开机台会自动兑现。</p>
@@ -1268,6 +1301,24 @@
             <span class="card-cta">入座开局 →</span>
           </div>
         </button>
+        <button class="card-btn cas" data-go="zjh">
+          <div class="card-art"><svg viewBox="0 0 24 24"><use href="#i-zjh"/></svg></div>
+          <div class="card-body">
+            <h3>炸金花<small>夜之角 ・ 3 张牌</small></h3>
+            <p>4 人桌 · 底注 · 闷牌／看牌 · 比牌</p>
+            <ul><li>豹子＞同花顺＞同花＞顺子＞对子＞散牌</li><li>235 不同花可胜豹子；看牌后跟注 ×2</li></ul>
+            <span class="card-cta">入座开局 →</span>
+          </div>
+        </button>
+        <button class="card-btn cas" data-go="fillet">
+          <div class="card-art"><svg viewBox="0 0 24 24"><use href="#i-knife"/></svg></div>
+          <div class="card-body">
+            <h3>手指刀锋<small>夜之角 ・ FIVE FINGER FILLET</small></h3>
+            <p>美式酒吧经典：刀在指缝间按序落下</p>
+            <ul><li>命中一刀涨一档，最多 10 刀 ×50</li><li>扎到手立刻出局，本金全输</li></ul>
+            <span class="card-cta">入座开局 →</span>
+          </div>
+        </button>
       </div>
     </div>
     <div class="walletbar">
@@ -1283,11 +1334,13 @@
           </div>
         </div>
         <div>
-          <h3>夜之角 ・ 六弹舱</h3>
-          <p>走廊尽头还有一张桌子——灯更暗、水钱一样，但空气不太一样。那里有位安静的看板娘在等你，
-             她说她喜欢听弹舱一颗一颗转过去的声音。</p>
+          <h3>夜之角 ・ 三张桌子</h3>
+          <p>走廊尽头还有三张桌子——灯更暗、水钱一样，但空气不太一样：一台六弹舱、一张炸金花，
+             还有一张美式的手指刀锋。那里有位安静的看板娘在等你，她说她喜欢听弹舱一颗一颗转过去的声音。</p>
           <div class="row" style="margin-top:10px">
-            <button class="gold" data-go="rr" style="flex:0 0 auto">去见她 →</button>
+            <button class="gold" data-go="rr" style="flex:0 0 auto">六弹舱 →</button>
+            <button data-go="zjh" style="flex:0 0 auto">炸金花 →</button>
+            <button data-go="fillet" style="flex:0 0 auto">手指刀锋 →</button>
             <button id="saya-melody" style="flex:0 0 auto">♪ 播放她的歌</button>
           </div>
         </div>
@@ -1308,7 +1361,7 @@
 <section id="scr-pachinko" class="screen">
 <div class="wrap">
   <div class="cabinet">
-<div class="brandbar"><b>KouKi&#39;s 赌场</b><span>CASINO 赌场・12 台机台 ・ 美元结算</span></div>
+<div class="brandbar"><b>KouKi&#39;s 赌场</b><span>CASINO 赌场・14 台机台 ・ 美元结算</span></div>
     <canvas id="pf"></canvas>
     <div class="underbar">
       <span>上球盘／下球盘 一体式</span>
@@ -2007,6 +2060,115 @@
     </aside>
   </div>
 </section>
+
+<section id="scr-zjh" class="screen">
+  <div class="cas-wrap">
+    <div class="cas-table">
+      <div class="felt" style="min-height:520px">
+        <div class="felt-label">炸金花 ・ 3 张牌 ・ 闷牌／看牌・比牌</div>
+        <div class="th-seats" id="zjh-seats"></div>
+        <div style="text-align:center;margin-top:10px;font-size:17px;font-weight:800;color:#ffe08a" id="zjh-pot">底池 $0</div>
+        <div style="display:flex;justify-content:center;gap:8px;margin-top:10px;min-height:92px;align-items:center;flex-wrap:wrap" id="zjh-mine"></div>
+        <div id="zjh-msg" style="text-align:center;margin-top:10px;font-size:14.5px;font-weight:700;color:#eaffef;min-height:22px"></div>
+      </div>
+      <div class="betbar">
+        <button id="zjh-deal" class="abtn go">开始新一局</button>
+        <button id="zjh-see" class="abtn gold" disabled>看牌</button>
+        <button id="zjh-call" class="abtn" disabled>跟注</button>
+        <button id="zjh-raise" class="abtn" disabled>加注</button>
+        <button id="zjh-cmp" class="abtn red" disabled>比牌</button>
+        <button id="zjh-fold" class="abtn red" disabled>弃牌</button>
+      </div>
+      <div class="betbar" style="padding-top:2px">
+        <div class="chips" id="zjh-chips"></div>
+        <span style="flex:1"></span>
+        <span class="hint" id="zjh-info" style="align-self:center">底注 $1</span>
+      </div>
+    </div>
+    <aside class="hud">
+      <div class="card">
+        <h2>赌场账户</h2>
+        <div class="led"><span>现金 <b id="zjh-chips2">0</b></span><span>本局 <b id="zjh-bet">0</b></span><span>状态 <b id="zjh-state" class="hot">待开局</b></span></div>
+        <div class="cas-acct" data-acct="zjh"></div>
+      </div>
+      <div class="card">
+        <h2>资金・借还</h2>
+        <div class="row"><button id="zjh-buy1" class="gold">借款 $100</button><button id="zjh-buy5">借款 $500</button></div>
+        <div class="row" style="margin-top:8px">
+          <button id="zjh-mute">音效 ON</button>
+          <button id="zjh-reset" class="warn">重置牌桌</button>
+        </div>
+        <p class="hint" style="margin:10px 0 0">键盘：<span class="k">空格</span>开局・<span class="k">S</span>看牌・<span class="k">C</span>跟注・<span class="k">R</span>加注・<span class="k">B</span>比牌・<span class="k">F</span>弃牌</p>
+      </div>
+      <div class="card rules">
+        <h2>玩法／牌型（3 张）</h2>
+        <ul>
+          <li><b>4 人桌</b>（你 + 3 位 AI），每人先交<b>底注</b>，再各发 <b>3 张暗牌</b>。</li>
+          <li>牌型大小：<b>豹子</b>（三张同点）＞<b>同花顺</b>＞<b>同花</b>＞<b>顺子</b>＞<b>对子</b>＞<b>散牌</b>；同型比点数，点数相同比花色（♠＞♥＞♦＞♣）。</li>
+          <li>顺子大小：<b>A23</b> 最小 → 234 → … → <b>QKA</b> 最大；特殊规则：<b>235 不同花</b>可胜豹子。</li>
+          <li><b>闷牌</b>（未看牌）只需下 <b>1 注</b>即可跟；<b>看牌</b>后跟注要下 <b>2 注</b>（看牌后下注翻倍）。</li>
+          <li><b>比牌</b>：花当前注额指定一名对手比牌，输的一方直接出局（平局时发起方输）。</li>
+          <li>最后未出局者赢得底池；只剩你一人时直接收池。</li>
+        </ul>
+        <h2 style="margin-top:12px">最近记录</h2>
+        <div class="log" id="zjh-log"></div>
+      </div>
+    </aside>
+  </div>
+</section>
+
+<section id="scr-fillet" class="screen">
+  <div class="cas-wrap">
+    <div class="cas-table">
+      <div class="felt" style="min-height:560px">
+        <div class="felt-label">FIVE FINGER FILLET ・ 手指刀锋</div>
+        <canvas id="fil-cv"></canvas>
+        <div id="fil-msg" style="text-align:center;margin-top:10px;font-size:15px;font-weight:700;color:#ffe08a;min-height:22px"></div>
+        <div class="fil-ladder" id="fil-ladder"></div>
+      </div>
+      <div class="betbar">
+        <div class="chips" id="fil-chips"></div>
+        <span style="flex:1"></span>
+        <button id="fil-go" class="abtn go">下注开局</button>
+        <button id="fil-stab" class="abtn gold" disabled>扎！SPACE</button>
+        <button id="fil-cash" class="abtn" disabled>收手结算</button>
+      </div>
+      <div class="betbar" style="padding-top:2px">
+        <button id="fil-hi" class="abtn">注码：标准</button>
+        <span style="flex:1"></span>
+        <span class="hint" id="fil-info" style="align-self:center">先选筹码再按「下注开局」</span>
+      </div>
+    </div>
+    <aside class="hud">
+      <div class="card">
+        <h2>赌场账户</h2>
+        <div class="led"><span>现金 <b id="fil-chips2">0</b></span><span>本局 <b id="fil-bet">0</b></span><span>状态 <b id="fil-state" class="hot">待下注</b></span></div>
+        <div class="cas-acct" data-acct="fil"></div>
+      </div>
+      <div class="card">
+        <h2>资金・借还</h2>
+        <div class="row"><button id="fil-buy1" class="gold">借款 $100</button><button id="fil-buy5">借款 $500</button></div>
+        <div class="row" style="margin-top:8px">
+          <button id="fil-mute">音效 ON</button>
+          <button id="fil-reset" class="warn">重置牌桌</button>
+        </div>
+        <p class="hint" style="margin:10px 0 0">键盘：<span class="k">空格</span>下注／扎刀・<span class="k">C</span>收手结算</p>
+      </div>
+      <div class="card rules">
+        <h2>玩法／倍率</h2>
+        <ul>
+          <li>美式酒吧经典<b>手指刀锋</b>：五指张开，刀锋在指缝间按顺序落下，<b>扎到手就出局</b>。</li>
+          <li>开局先下注，指针（刀）在 6 个位置左右扫动，<b>当红点扫到高亮指缝时按「扎！」</b>。</li>
+          <li>每成功一次，扫动速度加快，<b>倍率阶梯随之上抬</b>；随时可「收手结算」按当前倍率拿钱。</li>
+          <li>一旦失误（刀扎到手指）本局立即结束，<b>本金全输</b>。</li>
+          <li>连成 <b>10 刀</b>自动封顶结算，倍率 <b>×50</b>；失误容差会随刀数略微放宽，越到后面越考验节奏。</li>
+        </ul>
+        <h2 style="margin-top:12px">最近记录</h2>
+        <div class="log" id="fil-log"></div>
+      </div>
+    </aside>
+  </div>
+</section>
 </main>
 <div class="wmodal" id="w-modal" role="dialog" aria-modal="true">
   <div class="wpanel">
@@ -2589,10 +2751,13 @@
   const LINES = {
     sky: {
       name:'青云天空', sub:'SEIUN SKY ・ 游戏场 看板娘',
-      greet:['唔——欢迎光临。这里是赌场大厅，十二台机台都能看，需要讲解就叫我。',
+      greet:['唔——欢迎光临。这里是赌场大厅，十四台机台都能看，需要讲解就叫我。',
              '唔…我是这里的看板娘青云天空，负责带路和讲规则，不负责替你押注哦。',
              '欢迎回来。今天想先从哪一台看起？',
-             '唔、你来得正好，我刚把台词背熟了——啊，没什么，当我没说。'],
+             '唔、你来得正好，我刚把台词背熟了——啊，没什么，当我没说。',
+             '欢迎回来。你那台机器我擦过了，手感应该更顺。',
+             '唔…走廊那头的灯我替你留着，你要是想慢慢逛也行。',
+             '欢迎回来。累了就先坐，我不催你的。'],
       tip:['唔…这台机的手柄大概调到 70% 前后最好使，太弱的话球会滚回来。',
            '老虎机记得开「停轮辅助」，绿灯亮的时候再按停——那是能拉进小役的位置。',
            '德州扑克那桌，翻牌前手牌不好就先弃，规则上这样最省。',
@@ -2600,23 +2765,42 @@
            '六弹舱那台…我路过都绕远一点。你要去的话，记得先看一遍赔率表。',
            '唔…困了。有事摇铃叫我，我在后面打个盹。',
            '钱快见底的时候先别慌——贷款还剩多少额度，钱包面板上写着呢。',
-           '签到记得每天领，$1,000 够你玩很久了——别忘了我提醒过你。'],
+           '签到记得每天领，$1,000 够你玩很久了——别忘了我提醒过你。',
+           '炸金花那桌：闷牌跟注只要 1 注、看牌后要 2 注，牌差就早点弃，别硬跟。',
+           '手指刀锋是美式酒吧的把戏——红点扫到亮格再下手，越到后面越快，见好就收。',
+           '借了钱也是要还的哦。借之前先想想这把值不值。',
+           '每台机都有「高赌注」档，手感一样，只是数字后面多几个零——先掂量一下。',
+           '美式那几台和别的桌规则不一样，别把赔率表看错了，上面都写着呢。',
+           '手指刀锋收手结算比硬拼第十刀划算——这话我说过好几遍了吧。',
+           '赢了也别急着全押下去——慢慢玩，机台又不会跑。'],
       win:['嗯っ！这手真漂亮——我在旁边都替你紧张了。',
            '赢了赢了！你看，我就说这局有戏。',
            '嗯っ、嗯っ！收下吧，这是你应得的。',
-           '呼——看你赢我就放心了。要不要再来一把？'],
+           '呼——看你赢我就放心了。要不要再来一把？',
+           '漂亮！这把记我账上——我是说，记在好感度上。',
+           '干得漂亮！我在旁边看得手都跟着使劲了。',
+           '嗯っ、这把我记住了。你今天状态不错。'],
       near:['唔……就差一点点！刚才那个真的是擦边球。',
             '哎——差一格！这种时候最容易上头了，先深呼吸。',
-            '就差那么一点点……再来一次说不定就中了。',
-            '唔、我都有点替你可惜了。要不算了？——我随便说说的，继续吧。'],
+             '就差那么一点点……再来一次说不定就中了。',
+             '唔、我都有点替你可惜了。要不算了？——我随便说说的，继续吧。',
+             '唔——就差一格！我都替你捏把汗。',
+             '差一点点。……我知道，这种时候最难走开。',
+             '呼……差一格。要不先深呼吸一下再来？'],
       lose:['唔…没中。要不要我把规则再说一遍？',
             '唔——这局不顺，先歇一会儿嘛，我去给你倒杯水。',
-            '别急，机器又不会跑掉。'],
+            '别急，机器又不会跑掉。',
+            '唔，输了也没关系。要不换一台试试手感？',
+            '唔——这局不算数，下一局才算。',
+            '输掉的我都替你记着……不是让你心疼，是让你别重复同一个错。'],
       idle:['唔…（她靠着柜台打瞌睡）',
             'ん…今天店里好安静呢。',
             '等下班我要去钓鱼，你要不要一起？——开玩笑的，你还得看店。',
             '唔…我数了一下，走廊那头今天一直很安静。',
-            '（她偷偷把你台面上的筹码摆整齐了）'],
+            '（她偷偷把你台面上的筹码摆整齐了）',
+            '（她把你的筹码按面值排成了一排）',
+            '（她把钓竿往柜台底下挪了挪，又假装什么都没发生）',
+            '唔…我把大厅的灯调暗了一格。说是省电，其实也没人查。'],
       relief:['等、等一下——你先别急着走。',
               '你现在的现金，加上还能借的额度，已经不到 $10 了，所以系统判定破产，救济金已经打进你的钱包：$100。',
               '规则很简单：现金 ＋ 可借额度 ≤ $10 才算破产，这时候有 70% 概率能拿到 $100。',
@@ -2628,17 +2812,35 @@
            200:'满、满了！200%！那……以后你来，我第一个跟你打招呼，说好了。' }
       ,hi:['唔…你来了。今天想玩哪台？我给你留了最好的位置。',
            '（她看到你就把钓鱼竿收了起来）……没什么，本来就该上班的。',
-           '你上次问的那台，我把要点写在纸条上了——就压在你手边。'],
+           '你上次问的那台，我把要点写在纸条上了——就压在你手边。',
+           '你现在来，我都会先看到你——这是说好的。',
+           '唔、你来了。我刚把椅子擦干净——就那把，你常坐的。'],
       touch:['唔！？——别突然摸头啦，我在上班……（小声）不过也没说不可以。',
              '（她被戳得一个踉跄）唔、你手劲好大…',
-             '再戳一下我可要收费了哦——用好感度付。']
+             '再戳一下我可要收费了哦——用好感度付。',
+             '（她假装生气地拍开你的手，又偷偷笑了）',
+             '唔哇——又来！……（小声）好吧，今天允许一次。',
+             '别摸头啦，发型会乱……算了，反正也没人看。']
     },
     saya: {
       name:'沙耶', sub:'SAYA ・ 夜之角的看板娘',
       greet:['……你来了。这里的灯很暗，很适合听歌。',
              '欢迎。弹舱已经上好了，你想从第几发开始？',
              '我一直在的哦。你什么时候来，我都在。',
-             '……脚步声我认得。是你。'],
+             '……脚步声我认得。是你。',
+             '……你回来了。夜之角一直给你留着位置。',
+             '……灯我留着。你什么时候来，这里都是亮的。',
+             '……坐下吧。夜之角不急。'],
+      tip:['……炸金花里，235 不同花能赢豹子。很少见，但我在等它出现。',
+           '……手指刀锋，别贪第十刀。我见过太多人在最后一刀上失手。',
+           '……六弹舱的赔率写在牌桌上，押之前先看一遍。',
+           '……夜之角的三张桌子都不会催你，慢慢来。',
+           '……闷牌的时候，我替你看过牌了——开玩笑的。',
+           '……钱不够的话，钱包里能借。借多少、什么时候还，你自己决定。',
+           '……炸金花的比牌要压上当前注额，输的人当场出局。按之前想清楚。',
+           '……手指刀锋每过一刀，筹码就翻一次。第九刀之后是五十倍——也最容易见血。',
+           '……高赌注档和标准档赔率一样，只是每一注更重。别为了快就下重注。',
+           '……每台机都有它的脾气。你按第一下的时候，我就知道你会不会赢。'],
       spin:['弹舱转起来了……真好听。',
             '嘘——听，它在转。',
             '每一次停下的位置，都是它自己选的。'],
@@ -2649,18 +2851,31 @@
             '响了。……你押的是第 {n} 发吗？那可真巧。'],
       win:['……又赢了呢。你笑起来的样子，比筹码好看。',
            '钱变多了。……要再来一次吗？我一直有空。',
-           '……嗯。这一局，我替你高兴。'],
+           '……嗯。这一局，我替你高兴。',
+           '……赢了。那我可以再多留你一会儿吗？',
+           '……又赢了。你数钱的时候，我一直看着。',
+           '……嗯。今晚的钱，都是从你那边流过来的。'],
       near:['……就差一点。你刚才的心跳，我听见了。',
             '差一格……没关系，夜还很长。',
-            '……差一点点就中了呢。再来一次吧，我陪你。',
-            '……可惜。不过你皱眉的样子，我也喜欢看。'],
+             '……差一点点就中了呢。再来一次吧，我陪你。',
+             '……可惜。不过你皱眉的样子，我也喜欢看。',
+             '……差一点。你的手在抖，我看到了。',
+             '……差别只有一点。但你刚才屏住了呼吸，我听见了。',
+             '……差一格。杯子还在，我给你留着。'],
       lose:['没关系。……我陪着你，晚一点再走也可以。',
-            '没中也一样。……那就再听一会儿歌吧。'],
+            '没中也一样。……那就再听一会儿歌吧。',
+            '……输赢都一样，我都会在这里。',
+            '……输掉的钱，就当是交给夜晚的学费。',
+            '……别皱眉。夜之角不催债。'],
       idle:['（她轻轻哼着一段不成调的歌）',
             '……夜还很长。',
             '这里的空气，只有我闻得到。',
-            '……你不在的时候，我就数弹舱转了几圈。',
-            '（她把手放在玻璃上，像是在确认什么）'],
+             '……你不在的时候，我就数弹舱转了几圈。',
+             '（她把手放在玻璃上，像是在确认什么）',
+             '（她在玻璃上写了一行字，又擦掉了）',
+             '……今晚的风，是从你那边吹过来的。',
+             '（她数了数桌上的筹码，又按原来的顺序摆了回去）',
+             '……我在听水声。这里的水声，和别人听到的不一样。'],
       relief:['……别急着走。',
               '你的现金和还能借的额度加起来，已经不到 $10 了。所以救济金已经放进口袋：$100。',
               '……规则很简单：现金加可借额度 ≤ $10 算破产，这时候有七成机会拿到 $100。',
@@ -2672,10 +2887,15 @@
            200:'……200。满出来了。……那我就不用再假装只是路过你了。' }
       ,hi:['……你来了。我把弹舱擦干净了，就等你。',
            '……今天要不要多待一会儿？我不会催你走的。',
-           '（她把一段旋律哼了一半，停下来看你）……剩下的一半，等你想听的时候再唱。'],
+           '（她把一段旋律哼了一半，停下来看你）……剩下的一半，等你想听的时候再唱。',
+           '……今天的歌，是唱给你的。',
+           '……你来了。我把歌留到你来了之后才唱。'],
       touch:['……嗯。再碰一下也可以。',
              '（她没有躲开）……你的手，是暖的。',
-             '……别停。']
+             '……别停。',
+             '……再近一点，也可以。',
+             '……嗯。（她没有把手收回去）',
+             '……你碰我的时候，玻璃上的雾散开了一点。']
     }
   };
   const AFF_MAX = 200;                        // 满好感度 200%
@@ -2892,10 +3112,12 @@
     box.innerHTML = h;
   }
   window.onScreenChange = function(target){
-    if(target === 'rr') setChar('saya');
+    if(target === 'rr' || target === 'zjh' || target === 'fillet') setChar('saya');
     else if(target === 'lobby') setChar(aff.saya > 0 && Math.random() < 0.5 ? 'saya' : 'sky');
     else setChar('sky');
     if(target === 'pachinko' && cur === 'sky') setTimeout(() => say(LINES.sky.tip[Math.floor(Math.random()*3)]), 1500);
+    if((target === 'zjh' || target === 'fillet') && cur === 'saya')
+      setTimeout(() => say(LINES.saya.tip[Math.floor(Math.random() * LINES.saya.tip.length)]), 1500);
   };
   window.onGameEvent = react;
   window.MascotSay = say;
@@ -2984,7 +3206,7 @@
   if($('hero-standee')) $('hero-standee').onclick = () => setChar('sky');
   if($('nc-saya-standee')) $('nc-saya-standee').onclick = () => setChar('saya');
   setChar('sky');
-  setTimeout(() => say('唔——欢迎来到赌场！十二台机台都摆在大厅里，从柏青哥到百家乐一应俱全；走廊尽头还有一位……嗯，你自己去看吧。'), 900);
+  setTimeout(() => say('唔——欢迎来到赌场！十四台机台都在店里，从柏青哥到炸金花一应俱全；走廊尽头还有一位……嗯，你自己去看吧。'), 900);
 })();
 </script>
 <script>
@@ -4235,7 +4457,7 @@ function createPachinko(){
 
   function go(target){
     screen = target;
-  ['lobby','pachinko','slot','wheel','blackjack','roulette','poker','craps','holdem','rr','baccarat','sicbo','keno'].forEach(s => {
+  ['lobby','pachinko','slot','wheel','blackjack','roulette','poker','craps','holdem','rr','baccarat','sicbo','keno','zjh','fillet'].forEach(s => {
       const el = $('scr-' + s);
       if(el) el.classList.toggle('show', s === target);
     });
@@ -4244,7 +4466,7 @@ function createPachinko(){
     window.PACH_ACTIVE = (target === 'pachinko');
     window.SLOT_ACTIVE = (target === 'slot');
     window.WHEEL_ACTIVE = (target === 'wheel');
-    window.CASINO_ACTIVE = ['blackjack','roulette','poker','craps','holdem','rr','baccarat','sicbo','keno'].indexOf(target) >= 0 ? target : null;
+    window.CASINO_ACTIVE = ['blackjack','roulette','poker','craps','holdem','rr','baccarat','sicbo','keno','zjh','fillet'].indexOf(target) >= 0 ? target : null;
     if(window.ENGINE) window.ENGINE.start();      // 唤醒引擎（切屏时重新起帧）
     if(window.onScreenChange) window.onScreenChange(target);
     if(target === 'lobby') refreshLobby();
@@ -5568,8 +5790,8 @@ function createPachinko(){
   const RV = {A:14,'2':2,'3':3,'4':4,'5':5,'6':6,'7':7,'8':8,'9':9,'10':10,J:11,Q:12,K:13};
   const W = window.WALLET;
   const C = { invested:0, won:0, hands:0, muted:false,
-              cur:{bj:0,rl:0,pk:0,cr:0,th:0,rr:0,bac:0,sic:0,ken:0},
-              log:{bj:[],rl:[],pk:[],cr:[],th:[],rr:[],bac:[],sic:[],ken:[]} };
+              cur:{bj:0,rl:0,pk:0,cr:0,th:0,rr:0,bac:0,sic:0,ken:0,zjh:0,fil:0},
+              log:{bj:[],rl:[],pk:[],cr:[],th:[],rr:[],bac:[],sic:[],ken:[],zjh:[],fil:[]} };
   /* 筹码＝玩家钱包现金：全局只有一本账，读写都直接落到钱包上 */
   Object.defineProperty(C, 'chips', {
     get: () => W.S.cash,
@@ -5671,6 +5893,7 @@ function createPachinko(){
     pk: { low:[1, 2, 3, 4, 5],      high:[1, 2, 3, 4, 5] },
     th: { low:{ sb:1, bb:2 },       high:{ sb:25, bb:50 } }
   };
+  TIERS.zjh = { low:[1, 2, 5, 10], high:[5, 10, 25, 50] };
   const TIER = {};
   function tierOf(k){ return TIER[k] || 'low'; }
   function isHigh(k){ return tierOf(k) === 'high'; }
@@ -5718,12 +5941,18 @@ function createPachinko(){
     if(k === 'bac'){ BAC.unit = isHigh(k) ? 100 : 5; }
     if(k === 'sic'){ SIC.unit = isHigh(k) ? 100 : 1; }
     if(k === 'ken'){ KEN.unit = isHigh(k) ? 100 : 1; }
+    if(k === 'zjh'){
+      ZJH.unit = isHigh(k) ? 5 : 1;
+      ZJH.ante = isHigh(k) ? 10 : 1;
+      ZJH_MAX = isHigh(k) ? 100 : 10;
+    }
     if(k === 'bj'){ BJ.msg = '注码档位：' + (isHigh(k) ? '高注' : '标准'); }
     if(k === 'rl') rlPaint();
     if(k === 'rr') rrPaint();
     if(k === 'bac') bacPaint();
     if(k === 'sic') sicPaint();
     if(k === 'ken') kenPaint();
+    if(k === 'zjh') zjhRender();
     if(k === 'pk') pkRender();
   }
   function cardEl(c, cls){
@@ -5748,7 +5977,7 @@ function createPachinko(){
     }
     return s;
   }
-  ['bj','rl','pk','cr','th','rr','bac','sic','ken'].forEach(k => {
+  ['bj','rl','pk','cr','th','rr','bac','sic','ken','zjh','fil'].forEach(k => {
     const b1 = $(k + '-buy1'), b5 = $(k + '-buy5'), mu = $(k + '-mute');
     if(b1){
       b1.textContent = '借款 $100';
@@ -6542,7 +6771,7 @@ function createPachinko(){
 
   /* ================= 德州扑克 ================= */
   const TH = { seats:[], deck:[], comm:[], pot:0, phase:'idle', actor:0, cur:0, minRaise:2,
-               dealer:0, msg:'', handNo:0, sb:1, bb:2, raiseAmt:2 };
+               dealer:0, msg:'', handNo:0, sb:1, bb:2, raiseAmt:2, mineSig:null };
   const TH_NAME = ['高牌','一对','两对','三条','顺子','同花','葫芦','四条','同花顺'];
   function ev5(cs){
     const rv = cs.map(c => RV[c.r]);
@@ -6648,19 +6877,26 @@ function createPachinko(){
     if(pe) pe.textContent = '底池 $' + fmt(TH.pot);
     const me = $('th-mine');
     if(me){
-      me.innerHTML = '';
       const ms = TH.seats[0];
-      if(ms && ms.cards.length){
-        ms.cards.forEach(c => me.appendChild(cardEl(c)));
-        const t = document.createElement('span');
-        t.className = 'hand-val';
-        t.style.marginLeft = '10px';
-        if(TH.comm.length){
-          const e = ev7(ms.cards.concat(TH.comm));
-          t.textContent = '你的牌型：' + TH_NAME[e[0]] + '　筹码 $' + fmt(ms.stack);
-        } else t.textContent = '手牌　筹码 $' + fmt(ms.stack);
-        me.appendChild(t);
+      /* 同上：只在手牌或公共牌真的变了才重建，避免每次行动都重放发牌动画 */
+      const sig = ms ? (TH.handNo + '|' + ms.cards.map(c => c.r + c.s).join(',') + '|' +
+                        TH.comm.map(c => c.r + c.s).join(',')) : '';
+      if(sig !== TH.mineSig){
+        TH.mineSig = sig;
+        me.innerHTML = '';
+        if(ms && ms.cards.length){
+          ms.cards.forEach(c => me.appendChild(cardEl(c)));
+          const t = document.createElement('span');
+          t.className = 'hand-val';
+          t.id = 'th-mine-txt';
+          t.style.marginLeft = '10px';
+          me.appendChild(t);
+        }
       }
+      const txt = $('th-mine-txt');
+      if(txt && ms) txt.textContent = TH.comm.length
+        ? ('你的牌型：' + TH_NAME[ev7(ms.cards.concat(TH.comm))[0]] + '　筹码 $' + fmt(ms.stack))
+        : ('手牌　筹码 $' + fmt(ms.stack));
     }
     const m = $('th-msg'); if(m) m.textContent = TH.msg;
     const st = $('th-state');
@@ -7174,6 +7410,7 @@ function createPachinko(){
   if($('th-reset')) $('th-reset').onclick = () => {
     if(TH.seats[0]) TH.seats[0].stack = W.S.cash;   // 现金与牌桌筹码本就同一笔，不重复入账
     TH.phase = 'idle'; TH.comm = []; TH.pot = 0; TH.msg = '';
+    TH.mineSig = null;
     C.log.th.length = 0;
     const lg = $('th-log'); if(lg) lg.innerHTML = '';
     thInit();
@@ -7846,13 +8083,501 @@ function createPachinko(){
     else if(k === 'c') kenClearPicks();
   });
 
+  /* ================= 炸金花（夜之角・3 张牌） ================= */
+  const ZJH_SEATS = ['你', 'AI 老千', 'AI 快手', 'AI 闷神'];
+  let ZJH_MAX = 10;
+  const ZJH = { deck:[], seats:[], cur:0, ante:1, unit:1, pot:0, phase:'idle',
+                round:0, msg:'', handNo:0, mineSig:null };
+  const zjhRankVal = c => RV[c.r];
+  const zjhSuitVal = c => ({ '♠':4, '♥':3, '♦':2, '♣':1 })[c.s] || 0;
+  function zjhEval(cs){
+    const v = cs.map(zjhRankVal).sort((a, b) => b - a);
+    const suits = cs.map(zjhSuitVal);
+    const sameSuit = suits[0] === suits[1] && suits[1] === suits[2];
+    const uniq = [...new Set(v)];
+    let straight = false, high = 0;
+    if(uniq.length === 3){
+      if(v[0] === 14 && v[1] === 3 && v[2] === 2){ straight = true; high = 3; }
+      else if(v[0] - v[2] === 2){ straight = true; high = v[0]; }
+    }
+    const suitTie = Math.max.apply(null, suits);
+    if(uniq.length === 1) return [6, v[0], suitTie];
+    if(straight && sameSuit) return [5, high, suitTie];
+    if(sameSuit) return [4, v[0], v[1], v[2], suitTie];
+    if(straight) return [3, high, suitTie];
+    if(uniq.length === 2){
+      const p = (v[0] === v[1]) ? v[0] : v[1];
+      const single = (v[0] === v[1]) ? v[2] : v[0];
+      return [2, p, single, suitTie];
+    }
+    const base = [1, v[0], v[1], v[2], suitTie];
+    if(v[0] === 5 && v[1] === 3 && v[2] === 2) base.special235 = true;
+    return base;
+  }
+  const ZJH_NAME = ['散牌', '对子', '顺子', '同花', '同花顺', '豹子'];
+  const zjhName = cs => ZJH_NAME[zjhEval(cs)[0] - 1];
+  function zjhCmp(a, b){
+    const ea = zjhEval(a), eb = zjhEval(b);
+    if(ea.special235 && eb[0] === 6) return 1;
+    if(eb.special235 && ea[0] === 6) return -1;
+    return cmpH(ea, eb);
+  }
+  const zjhCurBet = () => ZJH.seats.reduce((m, s) => (!s.folded && s.bet > m ? s.bet : m), ZJH.ante);
+  const zjhAlive = () => { const a = []; ZJH.seats.forEach((s, i) => { if(!s.folded) a.push(i); }); return a; };
+  function zjhSeatHtml(i){
+    const s = ZJH.seats[i];
+    if(!s) return '';
+    const show = (ZJH.phase === 'show' && !s.folded);
+    const cls = 'seat' + (ZJH.phase === 'act' && ZJH.cur === i && !s.folded ? ' act' : '') + (s.folded ? ' fold' : '');
+    let cards = '';
+    if(s.cards.length) for(const c of s.cards) cards += cardEl(show ? c : {hidden:true}, 'tiny').outerHTML;
+    const tag = s.folded ? '已弃牌' : ((s.seen ? '已看牌' : '闷牌') + (s.bet ? '　已下 $' + s.bet : ''));
+    return '<div class="' + cls + '"><div class="sn"><span>' + s.name + '</span><b>$' + fmt(s.stack) + '</b></div>'
+      + '<div class="sc">' + cards + '</div><div class="sb">' + tag + '</div></div>';
+  }
+  function zjhRender(){
+    const wrap = $('zjh-seats');
+    if(wrap){
+      let h = '';
+      for(let i = 1; i < 4; i++) h += zjhSeatHtml(i);
+      wrap.innerHTML = h;
+    }
+    if(ZJH.seats[0]) ZJH.seats[0].stack = C.chips;
+    if($('zjh-pot')) $('zjh-pot').textContent = '底池 $' + fmt(ZJH.pot);
+    const mine = $('zjh-mine');
+    if(mine){
+      const me = ZJH.seats[0];
+      /* 只在「这一手真正变了」时重建牌面：否则每次对手行动都会重放发牌动画，
+         自己的牌就会不停闪烁，还要白跑一遍 DOM 重建（手机上更明显）。 */
+      const sig = me ? (ZJH.handNo + '|' + me.seen + '|' + me.cards.map(c => c.r + c.s).join(',')) : '';
+      if(sig !== ZJH.mineSig){
+        ZJH.mineSig = sig;
+        mine.innerHTML = '';
+        if(me && me.cards.length){
+          for(const c of me.cards) mine.appendChild(cardEl(me.seen ? c : {hidden:true}));
+          const t = document.createElement('span');
+          t.className = 'hand-val';
+          t.id = 'zjh-mine-txt';
+          t.style.marginLeft = '10px';
+          mine.appendChild(t);
+        }
+      }
+      const txt = $('zjh-mine-txt');
+      if(txt && me) txt.textContent = me.seen
+        ? ('你的牌型：' + zjhName(me.cards) + '　筹码 $' + fmt(me.stack))
+        : ('闷牌中 — 按「看牌」揭晓（看牌后跟注 ×2）　筹码 $' + fmt(me.stack));
+    }
+    if($('zjh-msg')) $('zjh-msg').textContent = ZJH.msg;
+    if($('zjh-state')) $('zjh-state').textContent = ZJH.phase === 'idle' ? '待开局'
+      : (ZJH.phase === 'show' ? '摊牌' : (ZJH.cur === 0 ? '轮到你' : '对手行动'));
+    const me = ZJH.seats[0];
+    const myTurn = ZJH.phase === 'act' && ZJH.cur === 0 && me && !me.folded;
+    const need = me ? Math.max(0, zjhCurBet() - me.bet) : 0;
+    const mul = (me && me.seen) ? 2 : 1;
+    ZJH.unit = Math.max(1, Math.min(ZJH_MAX, ZJH.unit));
+    C.cur.zjh = me ? me.bet : 0;
+    if($('zjh-bet')) $('zjh-bet').textContent = '$' + fmt(C.cur.zjh);
+    if($('zjh-chips2')) $('zjh-chips2').textContent = '$' + fmt(C.chips);
+    if($('zjh-see')) $('zjh-see').disabled = !(myTurn && !me.seen);
+    if($('zjh-call')){
+      $('zjh-call').disabled = !myTurn;
+      $('zjh-call').textContent = need > 0 ? ('跟注 $' + (need * mul)) : '过牌';
+    }
+    if($('zjh-raise')) $('zjh-raise').disabled = !(myTurn && me.stack > need * mul);
+    if($('zjh-cmp')) $('zjh-cmp').disabled = !(myTurn && zjhAlive().length > 1);
+    if($('zjh-fold')) $('zjh-fold').disabled = !myTurn;
+    if($('zjh-info')) $('zjh-info').textContent = '加注单位 $' + ZJH.unit + '（上限 $' + ZJH_MAX + '）　当前注 $'
+      + zjhCurBet() + '　' + (me && me.seen ? '你已看牌（跟注 ×2）' : '你还在闷牌（跟注 ×1）');
+    refreshAcct();
+  }
+  function zjhPay(i, amount){
+    const s = ZJH.seats[i];
+    const v = Math.min(amount, s.stack);
+    if(v <= 0) return 0;
+    if(i === 0 && !W.spend(v, 'bet')) return 0;
+    s.stack -= v; s.bet += v; ZJH.pot += v;
+    return v;
+  }
+  function zjhDeal(){
+    if(ZJH.phase !== 'idle') return;
+    ac();
+    if(C.chips < ZJH.ante){ ZJH.msg = '现金不足 — 可在「钱包／贷款」借款'; zjhRender(); return; }
+    ZJH.handNo++;
+    ZJH.deck = newShoe(1);
+    ZJH.pot = 0; ZJH.msg = ''; ZJH.round = 0;
+    /* AI 的筹码跨局累积，只有在快见底时才补充，避免每局凭空造钱 */
+    const prevStack = ZJH.seats.map(s => s.stack);
+    ZJH.seats = ZJH_SEATS.map((n, i) => ({ name:n,
+                                           stack:(i === 0 ? C.chips : ((prevStack[i] > 40) ? prevStack[i] : 200)),
+                                           cards:[], bet:0, folded:false, seen:(i !== 0) }));
+    for(let i = 0; i < 4; i++){
+      const a = zjhPay(i, ZJH.ante);
+      if(i === 0 && a === 0){ ZJH.phase = 'idle'; ZJH.msg = '底注不足'; zjhRender(); return; }
+    }
+    for(let r = 0; r < 3; r++) for(let i = 0; i < 4; i++) ZJH.seats[i].cards.push(ZJH.deck.pop());
+    ZJH.phase = 'act'; ZJH.cur = 1;
+    ZJH.msg = '底注 $' + ZJH.ante + ' — 发牌完毕。你是闷牌，按「看牌」可揭晓（看牌后跟注 ×2）';
+    addLog('zjh', '第 ' + ZJH.handNo + ' 局开始　底注 $' + ZJH.ante, '');
+    beep(640, 0.08, 'square', 0.04);
+    zjhRender();
+    setTimeout(zjhAI, 700);
+  }
+  function zjhAct(i, act, amount){
+    if(ZJH.phase !== 'act' || ZJH.cur !== i) return;
+    const s = ZJH.seats[i];
+    const need = Math.max(0, zjhCurBet() - s.bet);
+    const mul = s.seen ? 2 : 1;
+    if(act === 'fold'){
+      s.folded = true; ZJH.msg = s.name + ' 弃牌';
+    } else if(act === 'see'){
+      s.seen = true; ZJH.msg = s.name + ' 看牌' + (i === 0 ? '：' + zjhName(s.cards) : '');
+    } else if(act === 'call'){
+      const pay = zjhPay(i, need * mul);
+      if(pay === 0 && need > 0){ s.folded = true; ZJH.msg = s.name + ' 筹码不足，被迫弃牌'; }
+      else ZJH.msg = s.name + (need > 0 ? (' 跟注 $' + pay) : ' 过牌');
+    } else if(act === 'raise'){
+      const add = Math.max(1, Math.min(ZJH_MAX, amount || ZJH.unit));
+      const pay = zjhPay(i, (need + add) * mul);
+      if(pay === 0){ s.folded = true; ZJH.msg = s.name + ' 筹码不足，被迫弃牌'; }
+      else ZJH.msg = s.name + ' 加注到 $' + s.bet;
+    } else if(act === 'cmp'){
+      const others = zjhAlive().filter(x => x !== i);
+      if(!others.length) return;
+      const t = others[Math.floor(Math.random() * others.length)];
+      const pay = zjhPay(i, need * mul || mul);
+      const win = zjhCmp(ZJH.seats[i].cards, ZJH.seats[t].cards) > 0;
+      (win ? ZJH.seats[t] : s).folded = true;
+      ZJH.msg = s.name + ' 花 $' + pay + ' 与 ' + ZJH.seats[t].name + ' 比牌 — '
+        + (win ? s.name : ZJH.seats[t].name) + ' 胜（' + zjhName(s.cards) + ' vs ' + zjhName(ZJH.seats[t].cards) + '）';
+      addLog('zjh', '比牌：' + s.name + ' vs ' + ZJH.seats[t].name + ' → ' + (win ? s.name : ZJH.seats[t].name) + ' 胜',
+             (i === 0) === win ? 'w' : 'l');
+    }
+    chipSound();
+    zjhRender();
+    if(ZJH.phase !== 'act') return;
+    if(zjhAlive().length <= 1){ zjhSettle(); return; }
+    zjhNext();
+  }
+  function zjhNext(){
+    if(ZJH.phase !== 'act') return;
+    let n = ZJH.cur;
+    for(let k = 0; k < 4; k++){
+      n = (n + 1) % 4;
+      if(!ZJH.seats[n].folded){ ZJH.cur = n; break; }
+    }
+    if(ZJH.cur === 0) ZJH.round++;
+    else setTimeout(zjhAI, 560 + Math.random() * 420);
+    zjhRender();
+  }
+  function zjhAI(){
+    if(ZJH.phase !== 'act' || ZJH.cur === 0) return;
+    const i = ZJH.cur, s = ZJH.seats[i];
+    if(s.folded){ zjhNext(); return; }
+    const ev = zjhEval(s.cards);
+    const strong = ev[0] >= 2;
+    const weak = ev[0] === 1 && ev[1] < 11;
+    if(!s.seen && (ZJH.round > 0 || Math.random() < 0.5)){ zjhAct(i, 'see'); return; }
+    if(weak && Math.random() < 0.4){ zjhAct(i, 'fold'); return; }
+    if(strong && Math.random() < 0.4 && s.stack > zjhCurBet()){ zjhAct(i, 'raise', 1 + Math.floor(Math.random() * 3)); return; }
+    if(zjhAlive().length === 2 && Math.random() < 0.25){ zjhAct(i, 'cmp'); return; }
+    zjhAct(i, 'call');
+  }
+  function zjhSettle(){
+    if(ZJH.phase !== 'act') return;
+    ZJH.phase = 'show';
+    const alive = zjhAlive();
+    let w = alive[0];
+    for(const i of alive) if(i !== w && zjhCmp(ZJH.seats[i].cards, ZJH.seats[w].cards) > 0) w = i;
+    const pot = ZJH.pot, staked = ZJH.seats[0].bet;
+    if(w === 0){
+      W.settle(staked, pot, 'win');
+      C.won += Math.max(0, pot - staked);
+      winSound();
+    } else {
+      W.settle(staked, 0, 'win');
+      loseSound();
+    }
+    C.hands++;
+    ZJH.msg = ZJH.seats[w].name + ' 收下底池 $' + pot + '（' + zjhName(ZJH.seats[w].cards) + '）'
+      + (w === 0 ? '　你 +$' + (pot - staked) : '　你 -$' + staked);
+    addLog('zjh', '第 ' + ZJH.handNo + ' 局 ' + ZJH.seats[w].name + ' 收池 $' + pot, w === 0 ? 'w' : 'l');
+    let near = false;
+    if(w !== 0){
+      const me = zjhEval(ZJH.seats[0].cards), best = zjhEval(ZJH.seats[w].cards);
+      if(me[0] === best[0] && cmpH(me, best) === -1) near = true;
+      else if(me[0] >= 2) near = true;
+    }
+    if(window.MascotRound) window.MascotRound('zjh', w === 0 ? pot - staked : -staked, staked, near);
+    if(window.onGameEvent && w === 0 && pot >= staked * 4) window.onGameEvent('jackpot');
+    zjhRender();
+    setTimeout(() => {
+      if(ZJH.phase !== 'show') return;
+      ZJH.phase = 'idle';
+      ZJH.seats.forEach(s => { s.cards = []; s.bet = 0; s.folded = false; });
+      ZJH.pot = 0;
+      ZJH.msg = '本局结束 — 按「开始新一局」继续';
+      zjhRender();
+    }, 2800);
+  }
+  chipRow($('zjh-chips'), [1, 2, 5, 10], v => { ZJH.unit = v; chipSound(); zjhRender(); });
+  if($('zjh-deal')) $('zjh-deal').onclick = zjhDeal;
+  if($('zjh-see')) $('zjh-see').onclick = () => zjhAct(0, 'see');
+  if($('zjh-call')) $('zjh-call').onclick = () => zjhAct(0, 'call');
+  if($('zjh-raise')) $('zjh-raise').onclick = () => zjhAct(0, 'raise', ZJH.unit);
+  if($('zjh-cmp')) $('zjh-cmp').onclick = () => zjhAct(0, 'cmp');
+  if($('zjh-fold')) $('zjh-fold').onclick = () => zjhAct(0, 'fold');
+  if($('zjh-reset')) $('zjh-reset').onclick = () => {
+    if(ZJH.seats[0] && ZJH.seats[0].bet > 0) W.refund(ZJH.seats[0].bet);
+    ZJH.phase = 'idle'; ZJH.pot = 0; ZJH.seats = []; ZJH.msg = ''; ZJH.mineSig = null;
+    C.log.zjh.length = 0;
+    const lg = $('zjh-log'); if(lg) lg.innerHTML = '';
+    zjhRender();
+  };
+  window.addEventListener('keydown', e => {
+    if(window.CASINO_ACTIVE !== 'zjh') return;
+    const k = (e.key || '').toLowerCase();
+    if(e.code === 'Space'){ if(ZJH.phase === 'idle') zjhDeal(); e.preventDefault(); return; }
+    if(ZJH.phase !== 'act' || ZJH.cur !== 0) return;
+    if(k === 's') zjhAct(0, 'see');
+    else if(k === 'c') zjhAct(0, 'call');
+    else if(k === 'r') zjhAct(0, 'raise', ZJH.unit);
+    else if(k === 'b') zjhAct(0, 'cmp');
+    else if(k === 'f') zjhAct(0, 'fold');
+  });
+  zjhRender();
+
+  /* ================= 手指刀锋（Five Finger Fillet・夜之角） ================= */
+  const FIL_SLOTS = 6;                                   // 最左外侧 + 4 条指缝 + 最右外侧
+  const FIL_PATTERN = [0, 1, 2, 3, 4, 5, 4, 3, 2, 1];   // 经典来回路线（10 刀满分）
+  const FIL_MULT = [0, 1.5, 2, 2.7, 3.5, 4.5, 5.7, 7.2, 9, 11.5, 50];
+  const FIL = { phase:'idle', stake:0, unit:5, hi:false, step:0, pos:1.5, dir:1, speed:2.2,
+                target:0, hitFx:0, missFx:0, msg:'', roundNo:0, best:0 };
+  const FIL_CV = $('fil-cv');
+  const FIL_DPR = (window.ENGINE && window.ENGINE.QUAL.dpr) || Math.min(2, window.devicePixelRatio || 1);
+  const FILW = 560, FILH = 300;
+  const FILX = FIL_CV ? FIL_CV.getContext('2d') : null;
+  if(FIL_CV){
+    FIL_CV.width = Math.round(FILW * FIL_DPR); FIL_CV.height = Math.round(FILH * FIL_DPR);
+    FIL_CV.style.aspectRatio = FILW + ' / ' + FILH;
+    FILX.setTransform(FIL_DPR, 0, 0, FIL_DPR, 0, 0);
+    FILX.textBaseline = 'middle';
+  }
+  const filSlotX = i => 92 + i * ((FILW - 184) / (FIL_SLOTS - 1));
+  const filTol = () => 0.40 + Math.min(0.20, FIL.step * 0.022);
+  function filLadder(){
+    const box = $('fil-ladder');
+    if(!box) return;
+    let h = '';
+    for(let r = 1; r <= 10; r++){
+      const cls = (FIL.step === r) ? 'fil-step on' : (FIL.step > r ? 'fil-step done' : 'fil-step');
+      h += '<div class="' + cls + '">第' + r + '刀<b>×' + FIL_MULT[r] + '</b></div>';
+    }
+    box.innerHTML = h;
+  }
+  function filRender(){
+    if($('fil-state')) $('fil-state').textContent = FIL.phase === 'play'
+      ? ('第 ' + (FIL.step + 1) + ' 刀') : (FIL.phase === 'done' ? '结算' : '待下注');
+    if($('fil-chips2')) $('fil-chips2').textContent = '$' + fmt(C.chips);
+    C.cur.fil = (FIL.phase === 'play') ? FIL.stake : 0;
+    if($('fil-bet')) $('fil-bet').textContent = '$' + fmt(C.cur.fil);
+    if($('fil-go')) $('fil-go').disabled = (FIL.phase === 'play');
+    if($('fil-stab')) $('fil-stab').disabled = (FIL.phase !== 'play');
+    if($('fil-cash')) $('fil-cash').disabled = !(FIL.phase === 'play' && FIL.step >= 1);
+    if($('fil-hi')) $('fil-hi').textContent = '注码：' + (FIL.hi ? '高注' : '标准');
+    if($('fil-info')) $('fil-info').textContent = (FIL.phase === 'play')
+      ? ('押注 $' + FIL.stake + '　已成功 ' + FIL.step + ' 刀　可收手倍率 ×' + FIL_MULT[FIL.step]
+         + '　下一刀目标 ' + (FIL.target + 1) + ' 号位　容差 ' + Math.round(filTol() * 100) + '%')
+      : ('注码单位 $' + FIL.unit + (FIL.hi ? '（高注模式）' : '') + '　先选筹码再按「下注开局」');
+    if($('fil-msg')) $('fil-msg').textContent = FIL.msg;
+    filLadder();
+    refreshAcct();
+  }
+  function filDraw(){
+    if(!FILX) return;
+    const g = FILX.createRadialGradient(FILW/2, 40, 40, FILW/2, 150, 340);
+    g.addColorStop(0, FIL.missFx > 0 ? '#3a1010' : '#16202c');
+    g.addColorStop(1, '#070a0f');
+    FILX.fillStyle = g; FILX.fillRect(0, 0, FILW, FILH);
+    const baseY = 176;
+    /* 手掌 + 五指 */
+    FILX.save();
+    if(FIL.missFx > 0){
+      FILX.strokeStyle = '#ff6b6b'; FILX.lineWidth = 4;
+    } else {
+      FILX.strokeStyle = 'rgba(226,214,186,.9)';
+      FILX.lineWidth = 3;
+    }
+    FILX.fillStyle = FIL.missFx > 0 ? 'rgba(120,32,32,.55)' : 'rgba(226,214,186,.14)';
+    FILX.beginPath();
+    FILX.roundRect(120, baseY - 8, 320, 96, 22);
+    FILX.fill(); FILX.stroke();
+    for(let f = 0; f < 5; f++){
+      const cx = filSlotX(f) + ((FILW - 184) / (FIL_SLOTS - 1)) / 2;
+      const len = [58, 84, 96, 84, 58][f];
+      FILX.beginPath();
+      FILX.roundRect(cx - 15, baseY - 8 - len, 30, len + 24, 15);
+      FILX.fill(); FILX.stroke();
+    }
+    FILX.restore();
+    /* 6 个落刀位（4 条指缝 + 两侧） */
+    for(let i = 0; i < FIL_SLOTS; i++){
+      const x = filSlotX(i);
+      const on = (FIL.phase === 'play' && i === FIL.target);
+      FILX.beginPath();
+      FILX.ellipse(x, baseY + 40, 16, 9, 0, 0, 6.2832);
+      FILX.fillStyle = on ? 'rgba(255,209,102,.35)' : 'rgba(255,255,255,.07)';
+      FILX.fill();
+      if(on){
+        FILX.strokeStyle = '#ffd166'; FILX.lineWidth = 2.4; FILX.stroke();
+      }
+      FILX.fillStyle = on ? '#ffe9ab' : 'rgba(160,180,200,.6)';
+      FILX.font = '700 12px "Microsoft YaHei",sans-serif';
+      FILX.textAlign = 'center';
+      FILX.fillText(String(i + 1), x, baseY + 64);
+    }
+    /* 刀（随位置移动） */
+    const kx = filSlotX(Math.max(0, Math.min(FIL_SLOTS - 1, FIL.pos)));
+    const off = FIL.pos - Math.round(FIL.pos);
+    FILX.save();
+    FILX.translate(kx, 66);
+    FILX.rotate(Math.max(-0.5, Math.min(0.5, off * 1.2)));
+    FILX.beginPath();
+    FILX.moveTo(0, -46); FILX.lineTo(11, -18); FILX.lineTo(-11, -18); FILX.closePath();
+    FILX.fillStyle = '#e8eef8'; FILX.fill();
+    FILX.beginPath(); FILX.roundRect(-9, -20, 18, 16, 4);
+    FILX.fillStyle = '#c7d2e2'; FILX.fill();
+    FILX.beginPath(); FILX.roundRect(-5, -6, 10, 46, 5);
+    FILX.fillStyle = '#2f3a4a'; FILX.fill();
+    FILX.beginPath(); FILX.roundRect(-8, 40, 16, 26, 7);
+    FILX.fillStyle = FIL.missFx > 0 ? '#ff5f6d' : '#8b1a24'; FILX.fill();
+    FILX.restore();
+    if(FIL.hitFx > 0){
+      FILX.globalAlpha = Math.min(0.55, FIL.hitFx);
+      FILX.fillStyle = '#8ff0c8'; FILX.fillRect(0, 0, FILW, FILH);
+      FILX.globalAlpha = 1;
+    }
+    FILX.textAlign = 'center';
+    FILX.fillStyle = '#9fc0b3';
+    FILX.font = '700 13px "Microsoft YaHei",sans-serif';
+    FILX.fillText(FIL.phase === 'play'
+      ? ('按「扎！」 — 第 ' + (FIL.step + 1) + ' 刀 / 10　当前可收手 ×' + FIL_MULT[FIL.step])
+      : '选好注码后按「下注开局」', FILW / 2, FILH - 18);
+    FILX.textAlign = 'left';
+  }
+  let filLast = performance.now();
+  function filLoop(now, dt){
+    if(FIL.phase === 'play'){
+      const sp = FIL.speed * (1 + FIL.step * 0.055);
+      FIL.pos += FIL.dir * sp * dt;
+      if(FIL.pos >= FIL_SLOTS - 1){ FIL.pos = FIL_SLOTS - 1; FIL.dir = -1; }
+      if(FIL.pos <= 0){ FIL.pos = 0; FIL.dir = 1; }
+      if(Math.random() < 0.06) beep(1200, 0.015, 'square', 0.006);
+    }
+    if(FIL.hitFx > 0) FIL.hitFx = Math.max(0, FIL.hitFx - dt * 2.2);
+    if(FIL.missFx > 0) FIL.missFx = Math.max(0, FIL.missFx - dt * 1.1);
+    filDraw();
+  }
+  if(window.ENGINE) window.ENGINE.add('fillet', () => window.CASINO_ACTIVE === 'fillet',
+    filLoop, () => FIL.phase === 'play' ? 60 : 30);
+  function filStart(){
+    if(FIL.phase === 'play') return;
+    if(C.chips < FIL.unit){ FIL.msg = '现金不足 — 可在「钱包／贷款」借款或明天签到'; filRender(); return; }
+    if(!W.spend(FIL.unit, 'bet')) return;
+    ac();
+    FIL.stake = FIL.unit; FIL.step = 0; FIL.pos = 0.5; FIL.dir = 1;
+    FIL.target = FIL_PATTERN[0]; FIL.roundNo++;
+    FIL.phase = 'play';
+    FIL.msg = '刀锋就位 — 红点扫到 1 号位时按「扎！」';
+    beep(300, 0.1, 'sawtooth', 0.05);
+    filRender();
+  }
+  function filStab(){
+    if(FIL.phase !== 'play') return;
+    const d = Math.abs(FIL.pos - FIL.target);
+    if(d <= filTol()){
+      FIL.step++; FIL.hitFx = 1;
+      beep(880 + FIL.step * 60, 0.06, 'square', 0.05);
+      blip2(140, 0.05);
+      if(FIL.step >= 10){ filFinish('perfect'); return; }
+      FIL.target = FIL_PATTERN[FIL.step];
+      FIL.speed = Math.min(9, FIL.speed + 0.32);
+      FIL.msg = '第 ' + FIL.step + ' 刀命中！可收手 ×' + FIL_MULT[FIL.step] + '　下一刀 ' + (FIL.target + 1) + ' 号位';
+    } else {
+      FIL.missFx = 1;
+      beep(110, 0.35, 'sawtooth', 0.07);
+      setTimeout(() => beep(70, 0.4, 'square', 0.05), 60);
+      filFinish('miss');                              // 扎到手：本金全输
+    }
+    filRender();
+  }
+  function blip2(f, dur){ try{ beep(f, dur, 'triangle', 0.04); }catch(e){} }
+  function filFinish(kind){                          // 'perfect' 十刀封顶 / 'cash' 主动收手 / 'miss' 扎到手
+    if(FIL.phase !== 'play') return;
+    FIL.phase = 'done';
+    const staked = FIL.stake;
+    const mult = (kind === 'perfect') ? FIL_MULT[10] : (kind === 'cash' ? FIL_MULT[FIL.step] : 0);
+    const pay = Math.round(staked * mult);
+    if(pay > 0){
+      W.settle(staked, pay, 'win');
+      C.won += Math.max(0, pay - staked);
+      winSound();
+    } else {
+      W.settle(staked, 0, 'win');
+      loseSound();
+    }
+    C.hands++;
+    FIL.best = Math.max(FIL.best, FIL.step);
+    const net = pay - staked;
+    FIL.msg = (kind === 'perfect')
+      ? ('十刀封顶！×' + FIL_MULT[10] + ' 结算 → +$' + net)
+      : (kind === 'cash'
+          ? ('收手结算 ×' + mult + ' → +$' + net)
+          : ('扎到手了 — 本局 -$' + staked + '（本金全输）'));
+    addLog('fil', (kind === 'perfect' ? '十刀通关' : (FIL.step + ' 刀' + (kind === 'cash' ? '收手' : '失手')))
+      + '　押 $' + staked + ' → $' + pay, net > 0 ? 'w' : 'l');
+    if(window.MascotRound) window.MascotRound('fillet', net, staked, FIL.step >= 3);
+    if(window.onGameEvent && net > 0 && mult >= 4.5) window.onGameEvent('jackpot');
+    filRender();
+    setTimeout(() => {
+      if(FIL.phase !== 'done') return;
+      FIL.phase = 'idle'; FIL.step = 0; FIL.stake = 0; FIL.speed = 2.2;
+      FIL.msg = '本局结束 — 按「下注开局」再来一局';
+      filRender();
+    }, 2600);
+  }
+  chipRow($('fil-chips'), [1, 5, 25, 100], v => { FIL.unit = v; chipSound(); filRender(); });
+  if($('fil-go')) $('fil-go').onclick = filStart;
+  if($('fil-stab')) $('fil-stab').onclick = filStab;
+  if($('fil-cash')) $('fil-cash').onclick = () => { if(FIL.phase === 'play' && FIL.step >= 1) filFinish('cash'); };
+  if($('fil-hi')) $('fil-hi').onclick = () => {
+    FIL.hi = !FIL.hi;
+    FIL.unit = FIL.hi ? 50 : 5;
+    beep(FIL.hi ? 880 : 620, 0.08, 'square', 0.04);
+    filRender();
+  };
+  if($('fil-reset')) $('fil-reset').onclick = () => {
+    if(FIL.phase === 'play') W.refund(FIL.stake);
+    FIL.phase = 'idle'; FIL.step = 0; FIL.stake = 0; FIL.speed = 2.2; FIL.msg = '';
+    C.log.fil.length = 0;
+    const lg = $('fil-log'); if(lg) lg.innerHTML = '';
+    filRender();
+  };
+  if(FIL_CV) FIL_CV.addEventListener('pointerdown', () => { if(FIL.phase === 'play') filStab(); });
+  window.addEventListener('keydown', e => {
+    if(window.CASINO_ACTIVE !== 'fillet') return;
+    if(e.code === 'Space'){ FIL.phase === 'play' ? filStab() : filStart(); e.preventDefault(); return; }
+    if((e.key || '').toLowerCase() === 'c' && FIL.phase === 'play' && FIL.step >= 1) filFinish('cash');
+  });
+  filRender();
+
   /* ---- 初始化注码档位：默认全部为「标准」 ---- */
-  ['bj','rl','pk','cr','th','rr','bac','sic','ken'].forEach(k => injectTierBtn(k));
-  ['bj','rl','pk','cr','rr','bac','sic','ken'].forEach(k => { TIER[k] = 'low'; applyTier(k); });
+  ['bj','rl','pk','cr','th','rr','bac','sic','ken','zjh'].forEach(k => injectTierBtn(k));
+  ['bj','rl','pk','cr','rr','bac','sic','ken','zjh'].forEach(k => { TIER[k] = 'low'; applyTier(k); });
   TIER.th = 'low'; refreshTierBtn('th');
   refreshAcct();
   window.casinoAPI = {
     C: C, bj: BJ, rl: RL, pk: PK, cr: CR, th: TH, rr: RR, bac: BAC, sic: SIC, ken: KEN,
+    zjh: ZJH, fil: FIL,
     bjBet: bjBet, bjDeal: bjDeal, bjHit: bjHit, bjStand: bjStand, bjDouble: bjDouble, bjSplit: bjSplit,
     rlPlace: rlPlace, rlSpin: rlSpin, rlClear: rlClear,
     pkDeal: pkDeal, crBet: crBet, crRoll: crRoll, crOdds: crOdds,
@@ -7861,6 +8586,8 @@ function createPachinko(){
     bacPlace: bacPlace, bacDeal: bacDeal, bacClear: bacClear, bacSum: bacSum, bacVal: bacVal,
     sicPlace: sicPlace, sicRoll: sicRoll, sicClear: sicClear, sicEval: sicEval, sicQuick: sicQuick,
     kenToggle: kenToggle, kenDraw: kenDraw, kenRand: kenRand, kenClear: kenClearPicks
+    , zjhDeal: zjhDeal, zjhAct: zjhAct, zjhEval: zjhEval, zjhCmp: zjhCmp,
+    filStart: filStart, filStab: filStab, filFinish: filFinish
   };
 })();
 </script>
