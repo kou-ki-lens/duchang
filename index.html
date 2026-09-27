@@ -836,7 +836,8 @@
   }
   .wtoast{
     position:fixed;left:50%;bottom:28px;z-index:80;transform:translate(-50%,16px);opacity:0;
-    padding:11px 20px;border-radius:14px;font-size:13.5px;font-weight:700;letter-spacing:.03em;
+    max-width:calc(100vw - 24px);padding:11px 20px;border-radius:14px;font-size:13.5px;font-weight:700;
+    letter-spacing:.03em;text-align:center;line-height:1.55;white-space:normal;word-break:break-word;
     background:linear-gradient(180deg,#1b2634,#0d151e);color:#ffe9ab;border:1px solid #f4cd6b59;
     box-shadow:0 22px 50px #000c,0 0 34px #f4cd6b26;pointer-events:none;transition:.28s
   }
@@ -1060,7 +1061,7 @@
         <div class="sheen"></div>
         <div class="ring"></div>
         <div class="spark" id="hero-spark"></div>
-        <div class="plate"><b>青云天空</b><small>遊技场 看板娘</small></div>
+        <div class="plate"><b>青云天空</b><small>游戏场 看板娘</small></div>
       </div>
     </div>
     <div class="casino-group">
@@ -1123,8 +1124,8 @@
           </svg>
         </div>
         <div class="card-body">
-          <h3>パチスロ 老虎机<small>3-REEL PACHISLOT</small></h3>
-          <p>3枚挂 · 5条有效线 · 目押し + 引き込み</p>
+          <h3>老虎机 PACHISLOT<small>3-REEL SLOT</small></h3>
+          <p>3 枚挂 · 5 条有效线 · 目押停轮 + 拉入小役</p>
           <ul>
             <li>杠杆启动，三个停止键按目押停轮</li>
             <li>红7／蓝7＝BIG，BAR＝REG 奖励游戏</li>
@@ -1298,7 +1299,7 @@
       <div><span>今日签到</span><b id="lb-checkin">—</b></div>
       <div><span>救济金</span><b id="lb-relief">—</b></div>
       <div><span>柏青哥 持球</span><b id="lb-balls">—</b></div>
-      <div><span>老虎机 メダル</span><b id="lb-medals">—</b></div>
+      <div><span>老虎机 筹码</span><b id="lb-medals">—</b></div>
       <div><span>转盘机 分数</span><b id="lb-points">—</b></div>
     </div>
   </div>
@@ -1307,7 +1308,7 @@
 <section id="scr-pachinko" class="screen">
 <div class="wrap">
   <div class="cabinet">
-<div class="brandbar"><b>KouKi&#39;s 赌场</b><span>CASINO 遊技場・12 台机台 ・ 美元结算</span></div>
+<div class="brandbar"><b>KouKi&#39;s 赌场</b><span>CASINO 赌场・12 台机台 ・ 美元结算</span></div>
     <canvas id="pf"></canvas>
     <div class="underbar">
       <span>上球盘／下球盘 一体式</span>
@@ -1383,11 +1384,11 @@
 <section id="scr-slot" class="screen">
   <div class="slot-wrap">
     <div class="slot-cab">
-      <div class="cab-top"><span>PACHISLOT</span><b>3枚掛 / 5ライン</b><span>目押し＋引き込み</span></div>
+      <div class="cab-top"><span>PACHISLOT</span><b>3 枚挂 / 5 条线</b><span>目押停轮 ＋ 拉入小役</span></div>
       <canvas id="slotcv"></canvas>
       <div class="slot-controls">
         <button id="sl-bet" class="sbtn bet"><svg viewBox="0 0 24 24"><use href="#i-coin"/></svg>投入<small>BET 3枚</small></button>
-        <button id="sl-lever" class="sbtn lever"><svg viewBox="0 0 24 24"><use href="#i-lever"/></svg>启动<small>レバー / 空格</small></button>
+        <button id="sl-lever" class="sbtn lever"><svg viewBox="0 0 24 24"><use href="#i-lever"/></svg>启动<small>拉杆 / 空格</small></button>
         <button id="sl-s0" class="sbtn stop" disabled><svg viewBox="0 0 24 24"><use href="#i-stop"/></svg>停左<small>A</small></button>
         <button id="sl-s1" class="sbtn stop" disabled><svg viewBox="0 0 24 24"><use href="#i-stop"/></svg>停中<small>S</small></button>
         <button id="sl-s2" class="sbtn stop" disabled><svg viewBox="0 0 24 24"><use href="#i-stop"/></svg>停右<small>D</small></button>
@@ -1402,9 +1403,9 @@
           <span>MODE <b id="sl-mode-led" class="hot">通常</b></span>
         </div>
         <div class="stats">
-          <div class="stat big"><span>持有メダル</span><span id="sl-medal">0</span></div>
-          <div class="stat"><span>总出メダル</span><span id="sl-payout">0</span></div>
-          <div class="stat"><span>差枚(USD)</span><span id="sl-diff">$0</span></div>
+          <div class="stat big"><span>持有筹码</span><span id="sl-medal">0</span></div>
+          <div class="stat"><span>累计出筹码</span><span id="sl-payout">0</span></div>
+          <div class="stat"><span>差枚（USD）</span><span id="sl-diff">$0</span></div>
           <div class="stat"><span>投入(USD)</span><span id="sl-invest">$0</span></div>
           <div class="stat"><span>BIG／REG</span><span id="sl-bonus">0 / 0</span></div>
           <div class="stat"><span>奖励剩余</span><span id="sl-bonusleft">—</span></div>
@@ -1412,18 +1413,18 @@
         </div>
       </div>
       <div class="card">
-        <h2>借メダル・操作</h2>
+        <h2>借筹码・操作</h2>
         <div class="row" style="margin-bottom:8px">
-          <button id="sl-rent1" class="gold">借メダル $1</button>
+          <button id="sl-rent1" class="gold">借筹码 $1</button>
           <button id="sl-rent5">$10</button>
         </div>
         <div class="row" style="margin-bottom:8px">
-          <button id="sl-cash" class="gold">兑现メダル → 现金</button>
+          <button id="sl-cash" class="gold">兑现筹码 → 现金</button>
           <button id="sl-hi">注码：标准</button>
         </div>
         <div class="row">
           <button id="sl-auto"><svg viewBox="0 0 24 24" style="width:17px;height:17px;vertical-align:-3px"><use href="#i-auto"/></svg> 自动停轮</button>
-          <button id="sl-assist" class="on"><svg viewBox="0 0 24 24" style="width:17px;height:17px;vertical-align:-3px"><use href="#i-eye"/></svg> 目押辅助</button>
+          <button id="sl-assist" class="on"><svg viewBox="0 0 24 24" style="width:17px;height:17px;vertical-align:-3px"><use href="#i-eye"/></svg> 停轮辅助</button>
           <button id="sl-mute"><svg viewBox="0 0 24 24" style="width:17px;height:17px;vertical-align:-3px"><use href="#i-sound"/></svg> 音效 ON</button>
         </div>
         <div class="row" style="margin-top:8px">
@@ -1443,11 +1444,11 @@
         </div>
         <ul style="margin:10px 0 0;padding-left:18px;font-size:12px;line-height:1.7;color:#c3cfdf">
           <li>有效线：上段・中段・下段・右下斜・右上斜 共 5 条，同一条线 3 个相同即成立。</li>
-          <li>停止键按下的时机决定能否<b>引き込み</b>（拉入）小役，最多可滑 4 格；辅助打开会标出可拉入位置。</li>
+          <li>停止键按下的时机决定能否<b>拉入</b>小役，最多可滑 4 格；辅助打开会标出可拉入位置。</li>
           <li>BIG／REG 中的每一局高确率出小役，奖励局数用完自动回到通常。</li>
-          <li>1 枚＝<b>$1</b>；用钱包现金「借メダル」（$1／$10），差枚(USD)＝总出－总投入。</li>
-          <li>玩剩的メダル可按「<b>兑现メダル</b>」换回现金，离开机台会自动兑现；不想花钱可到柏青哥练手感。</li>
-          <li><b>高注模式</b>：每局变成 30 枚挂け、派彩同步 ×10，适合资金充裕时冲奖励。</li>
+          <li>1 枚＝<b>$1</b>；用钱包现金「借筹码」（$1／$10），差枚（USD）＝总出筹码－总投入。</li>
+          <li>玩剩的筹码可按「<b>兑现筹码</b>」换回现金，离开机台会自动兑现；不想花钱可到柏青哥练手感。</li>
+          <li><b>高注模式</b>：每局变成 30 枚挂、派彩同步 ×10，适合资金充裕时冲奖励。</li>
         </ul>
       </div>
     </aside>
@@ -2057,7 +2058,7 @@
       <li>救济金<b>不会连续触发</b>——触发后需要先再次获得金钱（非救济金），之后再次破产才会重新回到
           <span data-const="reliefP">70</span>% 判定。</li>
       <li>好感度：满值 <b>200%</b>，只有<b>赢下一局</b>或<b>差一点就赢</b>才会增加（每局最多 +2）。</li>
-      <li>柏青哥／老虎机／转盘是独立机台：可在机台按 <b>兑现</b> 把球・メダル・分数换回现金，<b>离开机台时会自动兑现</b>。</li>
+      <li>柏青哥／老虎机／转盘是独立机台：可在机台按 <b>兑现</b> 把球・筹码・分数换回现金，<b>离开机台时会自动兑现</b>。</li>
       <li>每张赌桌都有<b>标准注码</b>与<b>高注模式</b>两档，可按自己的资金量切换。</li>
     </ul>
     <div class="wrow" style="justify-content:flex-end">
@@ -2139,7 +2140,7 @@
     clearTimeout(toastT);
     toastT = setTimeout(() => toastEl.classList.remove('show'), 2800);
   }
-  /* ---------- 在场余额（球／メダル／分数 → 美分） ---------- */
+  /* ---------- 在场余额（球／筹码／分数 → 美分） ---------- */
   function onTable(){
     let c = 0;
     try{
@@ -2487,6 +2488,79 @@
     isBusy: () => jobs.some(j => { try{ return !!j.active(); }catch(e){ return false; } }),
     setLevel(n){ QUAL.level = Math.max(0, Math.min(2, n)); onLevel(); }
   };
+  /* ------------------------------------------------------------------
+     画布弹窗字幕：自动缩放字号 + 必要时折行 + 外框跟随文字宽度，
+     保证任何长度的提示都不会超出边框（柏青哥／老虎机／转盘共用）
+     ------------------------------------------------------------------ */
+  window.DrawToast = function(ctx, text, cx, cy, maxW, o){
+    if(!ctx || !text) return 0;
+    o = o || {};
+    const padX = o.padX == null ? 22 : o.padX;
+    const padY = o.padY == null ? 12 : o.padY;
+    const maxSize = o.maxSize || 23;
+    const minSize = o.minSize || 13;
+    const fam = o.font || '"Microsoft YaHei","Noto Sans SC",sans-serif';
+    const inner = Math.max(60, maxW - padX * 2);
+    const setF = s => { ctx.font = '800 ' + Math.round(s) + 'px ' + fam; };
+    let size = maxSize, lines = [String(text)];
+    setF(size);
+    if(ctx.measureText(lines[0]).width > inner){
+      while(size > minSize){
+        size -= 1; setF(size);
+        if(ctx.measureText(lines[0]).width <= inner) break;
+      }
+      if(ctx.measureText(lines[0]).width > inner){          // 还是太长 → 折成两行
+        const t = lines[0];
+        const mid = Math.ceil(t.length / 2);
+        const punct = '，。、；：！？）】」—・,.;:!? ';
+        let cut = -1;
+        for(let d = 0; d < mid && cut < 0; d++){
+          const a = mid + d, b = mid - d;
+          if(a < t.length && punct.indexOf(t[a]) >= 0) cut = a + 1;
+          else if(b > 0 && punct.indexOf(t[b]) >= 0) cut = b + 1;
+        }
+        if(cut < 0) cut = mid;
+        lines = [t.slice(0, cut), t.slice(cut)];
+      }
+    }
+    /* 折行后如果还是超出，再继续缩字号（下限 10px），确保任何长度都不出框 */
+    let maxLine = 0;
+    for(let i = 0; i < lines.length; i++) maxLine = Math.max(maxLine, ctx.measureText(lines[i]).width);
+    while(maxLine > inner && size > 10){
+      size -= 1; setF(size);
+      maxLine = 0;
+      for(let i = 0; i < lines.length; i++) maxLine = Math.max(maxLine, ctx.measureText(lines[i]).width);
+    }
+    const lh = size * 1.36;
+    let w = 0;
+    for(let i = 0; i < lines.length; i++) w = Math.max(w, ctx.measureText(lines[i]).width);
+    const bw = Math.min(maxW, w + padX * 2);
+    const bh = lines.length * lh + padY * 2;
+    const x = cx - bw / 2, y = cy - bh / 2, r = Math.min(16, bh / 2);
+    const oldBase = ctx.textBaseline, oldAlign = ctx.textAlign, oldAlpha = ctx.globalAlpha;
+    ctx.textBaseline = 'middle'; ctx.textAlign = 'center';
+    ctx.beginPath();
+    ctx.moveTo(x + r, y);
+    ctx.arcTo(x + bw, y, x + bw, y + bh, r);
+    ctx.arcTo(x + bw, y + bh, x, y + bh, r);
+    ctx.arcTo(x, y + bh, x, y, r);
+    ctx.arcTo(x, y, x + bw, y, r);
+    ctx.closePath();
+    ctx.fillStyle = o.bg || 'rgba(7,11,18,.9)';
+    ctx.fill();
+    ctx.strokeStyle = o.border || 'rgba(255,214,102,.7)';
+    ctx.lineWidth = 1.6; ctx.stroke();
+    ctx.fillStyle = o.color || '#ffe08a';
+    if(o.glow !== false){
+      ctx.shadowColor = o.color || '#ffd166';
+      ctx.shadowBlur = window.FX ? window.FX(12) : 12;
+    }
+    for(let i = 0; i < lines.length; i++)
+      ctx.fillText(lines[i], cx, y + padY + lh * (i + 0.5));
+    ctx.shadowBlur = 0;
+    ctx.textBaseline = oldBase; ctx.textAlign = oldAlign; ctx.globalAlpha = oldAlpha;
+    return { w: bw, h: bh, size: size, lines: lines.length, inner: inner, text: lines };
+  };
   onLevel();
   /* 移动端最贵的绘制操作是 shadowBlur（每帧做高斯模糊），低画质档直接关掉 */
   window.FX = n => (QUAL.level >= 2 ? n : 0);
@@ -2494,7 +2568,7 @@
 </script>
 <script>
 /* ============================================================
-   看板娘：青云天空（遊技场导游）＆ 沙耶（夜之角・六弹舱）
+   看板娘：青云天空（游戏场导游）＆ 沙耶（夜之角・六弹舱）
    ============================================================ */
 (function(){
   'use strict';
@@ -2514,13 +2588,13 @@
   }
   const LINES = {
     sky: {
-      name:'青云天空', sub:'SEIUN SKY ・ 遊技场 看板娘',
+      name:'青云天空', sub:'SEIUN SKY ・ 游戏场 看板娘',
       greet:['唔——欢迎光临。这里是赌场大厅，十二台机台都能看，需要讲解就叫我。',
              '唔…我是这里的看板娘青云天空，负责带路和讲规则，不负责替你押注哦。',
              '欢迎回来。今天想先从哪一台看起？',
              '唔、你来得正好，我刚把台词背熟了——啊，没什么，当我没说。'],
       tip:['唔…这台机的手柄大概调到 70% 前后最好使，太弱的话球会滚回来。',
-           '老虎机记得开「目押辅助」，绿灯亮的时候再按停——那是能拉进小役的位置。',
+           '老虎机记得开「停轮辅助」，绿灯亮的时候再按停——那是能拉进小役的位置。',
            '德州扑克那桌，翻牌前手牌不好就先弃，规则上这样最省。',
            '轮盘红黑各 47%，剩下那 5% 是店里的抽水，赔率表上写着的。',
            '六弹舱那台…我路过都绕远一点。你要去的话，记得先看一遍赔率表。',
@@ -2687,7 +2761,7 @@
       bar.className = cur === 'saya' ? 'saya' : '';
     }
     if(txt) txt.textContent = '好感度 ' + aff[cur] + ' / ' + AFF_MAX +
-      (cur === 'saya' ? ' ・ 夜之角' : ' ・ 遊技场');
+      (cur === 'saya' ? ' ・ 夜之角' : ' ・ 游戏场');
   }
   /* 好感度只从「赢下比赛 / 差一点赢」获得，每次结算最多 +2，且 0.9 秒内不重复计分 */
   function addAff(n){
@@ -3935,13 +4009,8 @@ function createPachinko(){
     if(G.msgT > 0 && G.msg){
       const a = Math.min(1, G.msgT*2.5);
       ctx.save(); ctx.globalAlpha = a;
-      rrect(60, 604, 420, 44, 10);
-      ctx.fillStyle = 'rgba(6,10,18,.85)'; ctx.fill();
-      ctx.strokeStyle = 'rgba(255,214,102,.6)'; ctx.lineWidth = 1.5; ctx.stroke();
-      ctx.textAlign = 'center';
-      ctx.font = '700 22px "Microsoft YaHei","Noto Sans SC",sans-serif';
-      ctx.fillStyle = '#ffe08a';
-      ctx.fillText(G.msg, 270, 627);
+      window.DrawToast(ctx, G.msg, 270, 626, 440,
+        { maxSize:22, minSize:13, padX:20, padY:11, bg:'rgba(6,10,18,.88)' });
       ctx.restore(); ctx.textAlign = 'left';
     }
   }
@@ -4361,7 +4430,7 @@ function createPachinko(){
       return;
     }
     const cost = 3 * S.mult;
-    if(S.medals < cost){ toastSlot('メダル不足 — 请先借メダル，或到「钱包／贷款」借款', 1900); return; }
+    if(S.medals < cost){ toastSlot('筹码不足 — 请先「借筹码」，或到「钱包／贷款」借款', 1900); return; }
     S.medals -= cost; S.used += cost; S.betDone = true;
     beep(660, 0.06, 'square', 0.035);
   }
@@ -4704,7 +4773,7 @@ function createPachinko(){
       ctx.restore();
     } else {
       ctx.fillStyle = '#c8a9d8';
-      ctx.fillText('3枚掛 ・ 5ライン ・ 目押しで引き込み', SW/2, 28);
+      ctx.fillText('3 枚挂 ・ 5 条有效线 ・ 目押停轮拉入', SW/2, 28);
     }
     for(let i = 0; i < 8; i++){
       const on = (Math.floor(S.t*6) + i) % 8 < 3;
@@ -4756,15 +4825,9 @@ function createPachinko(){
     if(S.msgT > 0 && S.msg){
       ctx.save();
       ctx.globalAlpha = Math.min(1, S.msgT*2.5);
-      roundRect(58, 186, SW-116, 68, 16);
-      ctx.fillStyle = 'rgba(6,3,12,.92)'; ctx.fill();
-      ctx.strokeStyle = '#ffd166aa'; ctx.lineWidth = 2; ctx.stroke();
-      ctx.textAlign = 'center';
-      ctx.font = '800 24px "Microsoft YaHei",sans-serif';
-      const g2 = ctx.createLinearGradient(0, 186, 0, 254);
-      g2.addColorStop(0,'#fff6cf'); g2.addColorStop(.5,'#ffd166'); g2.addColorStop(1,'#ff7ab8');
-      ctx.fillStyle = g2;
-      ctx.fillText(S.msg, SW/2, 220);
+      window.DrawToast(ctx, S.msg, SW/2, 220, SW-116,
+        { maxSize:24, minSize:14, padX:22, padY:13, bg:'rgba(6,3,12,.93)',
+          color:'#ffd166', border:'rgba(255,209,102,.72)' });
       ctx.restore();
       ctx.textAlign = 'left';
     }
@@ -4837,7 +4900,7 @@ function createPachinko(){
     set('sl-last', S.lastText);
     const led = $('sl-mode-led');
     if(led){
-      led.textContent = S.bonus ? (S.bonus.type + '中') : (S.phase === 'spin' ? '回転中' : '通常');
+      led.textContent = S.bonus ? (S.bonus.type + '中') : (S.phase === 'spin' ? '转动中' : '通常');
       led.className = S.bonus ? 'gold' : (S.phase === 'spin' ? 'hot' : '');
     }
     const b = $('sl-bet'); if(b) b.disabled = (S.phase !== 'idle' || S.betDone);
@@ -4879,7 +4942,7 @@ function createPachinko(){
     beep(760, 0.09, 'square', 0.05);
   };
   const cashOutMedals = quiet => {
-    if(S.medals <= 0){ if(!quiet) toastSlot('没有可兑现的メダル', 1500); return 0; }
+    if(S.medals <= 0){ if(!quiet) toastSlot('没有可兑现的筹码', 1500); return 0; }
     const n = S.medals, cents = n * S.rate;
     S.medals = 0;
     const repay = window.WALLET.earn(cents/100, 'cashout');
@@ -5389,15 +5452,9 @@ function createPachinko(){
     if(G.msgT > 0 && G.msg){
       ctx.save();
       ctx.globalAlpha = Math.min(1, G.msgT*2.5);
-      ctx.fillStyle = 'rgba(10,2,2,.93)';
-      ctx.fillRect(58, 248, CW-116, 62);
-      ctx.strokeStyle = '#ffd166aa'; ctx.lineWidth = 2;
-      ctx.strokeRect(58, 248, CW-116, 62);
-      ctx.font = '800 23px "Microsoft YaHei",sans-serif';
-      const g2 = ctx.createLinearGradient(0, 248, 0, 310);
-      g2.addColorStop(0,'#fff6cf'); g2.addColorStop(.5,'#ffd166'); g2.addColorStop(1,'#ff8a5c');
-      ctx.fillStyle = g2;
-      ctx.fillText(G.msg, CW/2, 281);
+      window.DrawToast(ctx, G.msg, CW/2, 281, CW-116,
+        { maxSize:23, minSize:14, padX:22, padY:12, bg:'rgba(10,2,2,.93)',
+          color:'#ffd166', border:'rgba(255,209,102,.72)' });
       ctx.restore();
     }
     ctx.textAlign = 'left';

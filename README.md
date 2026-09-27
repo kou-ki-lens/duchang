@@ -88,6 +88,10 @@ node test/structcheck.js    # 标签配对 / id 唯一 / SVG 引用
 node test/mobilecheck.js    # 手机适配静态检查（断点／触屏／省电）
 node test/perftest.js       # 每帧绘制开销基准
 node test/perftest.js mobile  # 手机档位下的基准
+node test/toastfit.js       # 画布弹窗字幕「一定装在框里」的定量检查（9 组文案）
+node test/mktoast.js        # 生成字幕验收页（肉眼确认框与文字比例）
+node test/mkprobe.js        # 生成手机视口探针页（真机宽度实测布局）
+node test/mkicons.js        # 生成图标总览页
 ```
 
 测试脚本通过桩化 DOM 直接跑 `index.html` 里的脚本，不需要浏览器。
