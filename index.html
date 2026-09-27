@@ -3,6 +3,26 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#080b11">
+<meta name="color-scheme" content="dark">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="KouKi&#39;s 赌场">
+<!--
+  ============================================================
+  【改版规则・务必遵守】
+  1) 功能／内容类更新必须「电脑端 + 手机端同步生效」：
+     图标(SVG symbol)、赔率与概率、破产/救济金/贷款规则、签到、
+     看板娘台词与好感度、玩法与结算逻辑……
+     这些一律写在媒体查询之外（全局），两端共用同一份代码。
+  2) 只有下面这些「手机独占」内容可以写在 @media 里：
+     触摸逻辑（touch-action / 长按 / 手势）、尺寸与布局（宽度、字号、
+     列数、间距、横屏、安全区）、省电与画质（DPR、阴影、模糊、动画降频）。
+  3) 新增任何功能后，运行 `node test/synccheck.js` 自检：
+     它会断言功能类规则必须在全局生效、手机独占项必须在媒体查询内。
+  ============================================================
+-->
 <title>KouKi&#39;s 赌场 ｜ CASINO</title>
 <style>
   :root{
@@ -11,9 +31,17 @@
     --gold:#efc75e; --red:#e5484d; --blue:#4f93f0; --green:#41c37a; --pink:#ff5fa2;
   }
   *{box-sizing:border-box}
+  html{background:#080b11}                 /* iOS 上下回弹／安全区不再露白 */
   html,body{margin:0;padding:0;background:radial-gradient(1200px 700px at 50% 0%,#151d2a 0%,var(--bg) 60%);
     color:var(--text);font-family:"Microsoft YaHei","PingFang SC","Noto Sans SC","Segoe UI","Meiryo",system-ui,sans-serif;
     -webkit-font-smoothing:antialiased}
+  /* 触屏独占：整页禁用「双击放大」，画布仍由 canvas{touch-action:none} 覆盖。
+     放在 (pointer:coarse) 里，桌面端完全不受影响（桌面靠默认行为即可）。 */
+  @media (pointer:coarse){
+    html,body{touch-action:manipulation}
+    *{-webkit-tap-highlight-color:transparent}
+  }
+  body{background-color:#080b11;min-height:100%}
   .wrap{display:flex;gap:20px;padding:20px;justify-content:center;align-items:flex-start;flex-wrap:wrap}
   .cabinet{position:relative;width:540px;max-width:94vw;border-radius:26px;padding:14px 14px 0;
     background:linear-gradient(180deg,#232d3d,#0c1119 70%);
@@ -131,7 +159,9 @@
   .card-body ul{margin:2px 0 0;padding-left:16px;font-size:12px;color:#93a4bd;line-height:1.6}
   .card-cta{margin-top:auto;font-size:12.5px;color:#ffd166;letter-spacing:.06em}
   .walletbar{margin-top:22px;display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px}
-  .walletbar div{display:flex;justify-content:space-between;align-items:baseline;padding:11px 14px;border-radius:14px;
+  /* 只作用于直系数据格：原来的 `.walletbar div` 会连「夜之角」区块和里面的头像容器一起
+     变成 flex 行，导致头像被压成内容宽、文字被挤成竖排（已修正） */
+  .walletbar > div:not(.night-corner){display:flex;justify-content:space-between;align-items:baseline;padding:11px 14px;border-radius:14px;
     background:#ffffff08;border:1px solid #ffffff12;font-size:12.5px;color:#9fb0c8}
   .walletbar b{font-size:17px;color:#ffe08a;font-variant-numeric:tabular-nums}
 
@@ -364,6 +394,9 @@
 
   #rl-wheel,#cr-dice{width:100%;display:block;border-radius:16px;background:#06110c;touch-action:none}
   .numgrid{display:grid;grid-template-columns:repeat(13,1fr);gap:4px;margin-top:10px}
+  /* #rl-grid 原本同时带着 .numgrid（自己是 13 列网格），内部又被 rlBuild 塞进两个子网格，
+     结果两个子网格各被挤进 1 列（手机上只剩 ~20px 宽，号码全部重叠）。这里让它退回普通容器。 */
+  #rl-grid{display:block}
   .nc{
     position:relative;aspect-ratio:1.5/1;border-radius:6px;border:1px solid #ffffff26;cursor:pointer;
     display:grid;place-items:center;font-size:11.5px;font-weight:700;color:#fff;background:#0f3a2a;
@@ -532,7 +565,7 @@
   .card-btn:hover::before{transform:translateX(120%)}
   .card-btn:hover{border-color:var(--gold);box-shadow:0 22px 54px #000a,0 0 0 1px #f4cd6b55,0 0 40px #f4cd6b26}
   .card-art{background:radial-gradient(circle at 50% 30%,#ffffff16,#ffffff05);border-color:#ffffff1f}
-  .walletbar div,.cas-acct div{background:rgba(244,205,107,.06);border-color:rgba(244,205,107,.18)}
+  .walletbar > div:not(.night-corner),.cas-acct div{background:rgba(244,205,107,.06);border-color:rgba(244,205,107,.18)}
   .walletbar b,.cas-acct b{color:#f6e3b4}
   button{box-shadow:0 6px 18px #0007,inset 0 1px 0 #ffffff1c}
   button.gold,.abtn.gold,.wbtn.gold{
@@ -565,14 +598,20 @@
     background:linear-gradient(90deg,#128a58,#f4cd6b);transition:width .5s ease}
   .mascot-aff i.saya{background:linear-gradient(90deg,#0f6b52,#48c9a0)}
   .mascot-bubble{
-    pointer-events:auto;width:100%;border-radius:16px;padding:11px 13px;font-size:13px;line-height:1.65;
+    pointer-events:none;width:100%;border-radius:16px;padding:11px 13px;font-size:13px;line-height:1.65;
     background:linear-gradient(180deg,rgba(21,30,41,.96),rgba(9,13,19,.97));
     border:1px solid rgba(244,205,107,.26);color:#e9f2ea;min-height:62px;
-    box-shadow:0 18px 46px #000a
+    box-shadow:0 18px 46px #000a;transition:opacity .35s ease,transform .35s ease
   }
+  .mascot-bubble.hide{opacity:0;transform:translateY(6px)}
+  /* 破产救济金对话：强制弹出（即使看板娘处于收起状态），卡片保持隐藏以免挡住机台 */
+  .mascot-dock.force .mascot-bubble{display:block}
+  .mascot-dock.force .mascot-card{display:none}
+  .mascot-bubble.alert{border-color:#f4cd6b99;box-shadow:0 18px 46px #000a,0 0 32px #f4cd6b3d}
+  .mascot-bubble.alert{pointer-events:auto;cursor:pointer}   /* 救济金说明可点掉 */
   .mascot-card.saya ~ .mascot-bubble{border-color:#48c9a044;color:#dff3ea}
   .mascot-bubble.saya{border-color:#48c9a044;color:#dff3ea;background:linear-gradient(180deg,rgba(10,26,22,.96),rgba(4,10,9,.97))}
-  .mascot-dock.mini .mascot-card,.mascot-dock.mini .mascot-bubble{display:none}
+  .mascot-dock.mini:not(.force) .mascot-card,.mascot-dock.mini:not(.force) .mascot-bubble{display:none}
   .mascot-bubble b{color:#f6e3b4}
   .mascot-bubble .cursor{display:inline-block;width:7px;color:#f4cd6b;animation:cur .8s steps(1) infinite}
   @keyframes cur{50%{opacity:0}}
@@ -583,7 +622,14 @@
   }
   .mascot-bar button:hover{border-color:var(--gold)}
   @media (max-width:720px){
-    .mascot-dock{left:8px;bottom:8px;width:min(280px,calc(100vw - 16px))}
+    /* 手机：对话框贴底、半透明、不吃点击，尽量不挡下注区 */
+    .mascot-dock{left:8px;right:8px;bottom:8px;width:auto}
+    .mascot-dock .mascot-bubble{
+      font-size:12.5px;line-height:1.6;padding:10px 12px;min-height:0;
+      max-height:23vh;overflow:auto;-webkit-overflow-scrolling:touch;
+      background:linear-gradient(180deg,rgba(21,30,41,.9),rgba(9,13,19,.93))
+    }
+    .mascot-card{max-height:46vh;overflow:auto;-webkit-overflow-scrolling:touch}
     .mascot-art{width:78px;height:90px;flex:0 0 78px}
   }
   .night-corner{
@@ -799,8 +845,11 @@
   /* ================================================================
      手机／平板自适应（电脑端布局完全不受影响）
      ================================================================ */
-  button,.tab,.chip,.nc,.rr-cell,.ken-ball,.betcard,.pcard{
-    touch-action:manipulation;-webkit-tap-highlight-color:transparent
+  /* 触屏独占：点按目标去掉双击缩放延迟（桌面端不需要，放进 coarse 里） */
+  @media (pointer:coarse){
+    button,.tab,.chip,.nc,.rr-cell,.ken-ball,.betcard,.pcard{
+      touch-action:manipulation;-webkit-tap-highlight-color:transparent
+    }
   }
   @media (max-width:1024px){
     .hud{width:100%;max-width:100%}
@@ -828,8 +877,11 @@
     .casino-sign{font-size:clamp(30px,10vw,52px)!important;letter-spacing:.14em}
     .casino-sign em{letter-spacing:.08em}
     .sky-avatar{width:212px;flex:0 0 212px}
-    .saya-avatar{max-width:200px}
-    .night-corner{grid-template-columns:160px 1fr;padding:14px}
+    /* 夜之角：手机上一律单列，立绘在上、文字在下，并让立绘容器占满整行 */
+    .night-corner{grid-template-columns:1fr;padding:14px;gap:12px}
+    .night-corner .nc-art{width:100%;margin:0;display:flex;justify-content:center;align-items:flex-end}
+    .saya-avatar{max-width:min(62vw,240px)}
+    .night-corner > div:last-child{width:100%}
     .cas-hub{padding:14px}
     .cards{gap:14px}
     .card-btn{padding:14px;gap:12px;border-radius:16px}
@@ -841,9 +893,9 @@
   @media (max-width:620px){
     .hero-badge{font-size:10.5px;padding:4px 10px;letter-spacing:.12em}
     .sky-avatar{width:178px;flex:0 0 178px}
-    .saya-avatar{max-width:158px}
     .night-corner{grid-template-columns:1fr}
-    .night-corner .nc-art{margin:0 auto}
+    .night-corner .nc-art{width:100%;margin:0;display:flex;justify-content:center}
+    .saya-avatar{max-width:min(66vw,232px)}
     /* 宽桌台改为可横向滑动，格子保持可点大小 */
     .numgrid{overflow-x:auto;padding-bottom:5px;-webkit-overflow-scrolling:touch}
     .nc{min-width:34px}
@@ -899,6 +951,20 @@
     }
     .cabinet,.slot-cab,.wheel-cab,.cas-table{display:flex;flex-direction:column}
   }
+  /* 手机省电：滤镜动画（filter）无法走合成层，会持续重绘大字，直接停掉 */
+  @media (max-width:1024px){
+    .casino-sign{animation:none!important}
+    .cabinet::after,.slot-cab::after,.wheel-cab::after{animation:none!important}
+    .standee.idle img,.mimg{animation-duration:6.5s}
+    .standee.idle .aura{animation-duration:7s}
+    /* 滚动顺滑：fixed 背景与大面积模糊会让 iOS 每帧重绘 */
+    body{background-attachment:scroll;overscroll-behavior-y:contain}
+    body::before{filter:none}
+    /* backdrop-filter 在手机上会让浏览器每帧重新模糊背景（尤其滚动时），换成实色更省电 */
+    .topbar{backdrop-filter:none;background:linear-gradient(180deg,#0a0e16,#0a0e16f2)}
+    .mascot-card{backdrop-filter:none}
+    .wmodal{backdrop-filter:none;background:#04070bf2}
+  }
 </style>
 </head>
 <body>
@@ -911,12 +977,13 @@
   <linearGradient id="gBody" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#35435f"/><stop offset="1" stop-color="#0c131d"/></linearGradient>
   <linearGradient id="gPurple" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#e7bcff"/><stop offset=".5" stop-color="#a75cf0"/><stop offset="1" stop-color="#43126b"/></linearGradient>
   <radialGradient id="gBall" cx=".35" cy=".3" r=".85"><stop offset="0" stop-color="#ffffff"/><stop offset=".45" stop-color="#d9e4f1"/><stop offset="1" stop-color="#77869b"/></radialGradient>
+  <linearGradient id="gTile" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2b3a52"/><stop offset=".55" stop-color="#182335"/><stop offset="1" stop-color="#0d151f"/></linearGradient>
   <symbol id="i-home" viewBox="0 0 24 24"><path d="M12 2.8 2.4 11h2.7v9.2h5v-6.1h3.8v6.1h5V11h2.7z" fill="url(#gGold)"/></symbol>
-  <symbol id="i-pach" viewBox="0 0 24 24"><rect x="2.6" y="2" width="18.8" height="20" rx="3.6" fill="url(#gBody)" stroke="url(#gChrome)" stroke-width="1.1"/><circle cx="11.4" cy="10" r="4.6" fill="none" stroke="#7fd8ff" stroke-width="1.1" opacity=".9"/><circle cx="11.4" cy="10" r="1.8" fill="url(#gBall)"/><g fill="#cfe0f5"><circle cx="7" cy="6" r=".85"/><circle cx="15.8" cy="6" r=".85"/><circle cx="6.4" cy="14.6" r=".85"/></g><rect x="8" y="16.4" width="6.6" height="2.3" rx="1.1" fill="#ffd166"/><circle cx="18.6" cy="19.2" r="2.7" fill="url(#gChrome)"/><path d="M18.6 19.2v-1.9" stroke="#ffd166" stroke-width="1.1"/></symbol>
+  <symbol id="i-pach" viewBox="0 0 24 24"><rect x="1.6" y="1.6" width="20.8" height="20.8" rx="5.6" fill="url(#gTile)" stroke="#3d5372" stroke-width="1"/><g fill="#bcd0e8"><circle cx="6.4" cy="6.6" r="1.05"/><circle cx="11.9" cy="6.6" r="1.05"/><circle cx="17.4" cy="6.6" r="1.05"/><circle cx="9.2" cy="10.8" r="1.05"/><circle cx="14.7" cy="10.8" r="1.05"/><circle cx="6.4" cy="15" r="1.05"/><circle cx="17.4" cy="15" r="1.05"/></g><circle cx="11.9" cy="9" r="2.5" fill="url(#gBall)" stroke="#7fd8ff" stroke-width=".7"/><rect x="8.2" y="17.2" width="7.6" height="3.1" rx="1.5" fill="url(#gGold)" stroke="#8a5b00" stroke-width=".7"/><path d="M12 15.6v1.4" stroke="#ffd166" stroke-width="1.2" stroke-linecap="round"/></symbol>
   <symbol id="i-slot" viewBox="0 0 24 24"><rect x="2.4" y="3" width="19.2" height="18" rx="3.2" fill="url(#gBody)" stroke="url(#gChrome)" stroke-width="1.1"/><g fill="#0a0512" stroke="#6b4f80" stroke-width=".7"><rect x="4.8" y="6" width="4.2" height="12" rx="1.3"/><rect x="9.9" y="6" width="4.2" height="12" rx="1.3"/><rect x="15" y="6" width="4.2" height="12" rx="1.3"/></g><text x="6.9" y="14.7" font-size="6.6" font-weight="700" text-anchor="middle" fill="url(#gRed)">7</text><text x="12" y="14.7" font-size="6.6" font-weight="700" text-anchor="middle" fill="url(#gGold)">7</text><text x="17.1" y="14.7" font-size="6.6" font-weight="700" text-anchor="middle" fill="url(#gBlue)">7</text><circle cx="22.4" cy="7.4" r="1.5" fill="url(#gGold)"/><path d="M22.4 7.4v5.2" stroke="url(#gChrome)" stroke-width="1.2"/></symbol>
   <symbol id="i-coin" viewBox="0 0 24 24"><circle cx="9" cy="9.6" r="5.4" fill="url(#gGold)" stroke="#8a5b00" stroke-width=".8"/><circle cx="9" cy="9.6" r="2.6" fill="none" stroke="#8a5b00" stroke-width=".8" opacity=".7"/><circle cx="14.6" cy="14.4" r="5.4" fill="url(#gGold)" stroke="#8a5b00" stroke-width=".8"/><circle cx="14.6" cy="14.4" r="2.6" fill="none" stroke="#8a5b00" stroke-width=".8" opacity=".7"/></symbol>
-  <symbol id="i-lever" viewBox="0 0 24 24"><path d="M7 20.6V10" stroke="url(#gChrome)" stroke-width="1.6" stroke-linecap="round"/><circle cx="7" cy="7" r="3.4" fill="url(#gGold)" stroke="#8a5b00" stroke-width=".8"/><path d="M14 19.4h6.6" stroke="#7fd8ff" stroke-width="2" stroke-linecap="round" opacity=".9"/><path d="M14 15.6h6.6" stroke="#7fd8ff" stroke-width="2" stroke-linecap="round" opacity=".55"/></symbol>
-  <symbol id="i-stop" viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="4.4" fill="url(#gRed)" stroke="#ffffff55" stroke-width=".9"/><rect x="9" y="9" width="6" height="6" rx="1.4" fill="#fff" opacity=".92"/></symbol>
+  <symbol id="i-lever" viewBox="0 0 24 24"><rect x="1.6" y="1.6" width="20.8" height="20.8" rx="5.6" fill="url(#gTile)" stroke="#3d5372" stroke-width="1"/><rect x="2.8" y="18.4" width="8.4" height="2.8" rx="1.4" fill="#3d5372"/><path d="M7 18.6 L13.6 8.6" stroke="url(#gChrome)" stroke-width="2.4" stroke-linecap="round"/><circle cx="14.4" cy="7.4" r="3.8" fill="url(#gGold)" stroke="#8a5b00" stroke-width=".8"/><circle cx="13.3" cy="6.3" r="1.15" fill="#fff8dc" opacity=".85"/><rect x="17.2" y="12.4" width="3.6" height="2" rx="1" fill="#7fd8ff" opacity=".9"/><rect x="17.2" y="16" width="3.6" height="2" rx="1" fill="#7fd8ff" opacity=".5"/></symbol>
+  <symbol id="i-stop" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9.4" fill="url(#gRed)" stroke="#ffd0d0" stroke-width="1.1"/><rect x="8.6" y="8.6" width="6.8" height="6.8" rx="1.6" fill="#fff" opacity=".95"/></symbol>
   <symbol id="i-auto" viewBox="0 0 24 24"><path d="M12 4.4a7.6 7.6 0 1 1-7.1 5.2" fill="none" stroke="#7fd8ff" stroke-width="2.1" stroke-linecap="round"/><path d="M12 1.4l3.8 3.6L12 8.6z" fill="#7fd8ff"/></symbol>
   <symbol id="i-eye" viewBox="0 0 24 24"><path d="M2.6 12S6 6.4 12 6.4 21.4 12 21.4 12 18 17.6 12 17.6 2.6 12 2.6 12z" fill="none" stroke="#ffd166" stroke-width="1.6"/><circle cx="12" cy="12" r="3.2" fill="url(#gGold)"/></symbol>
   <symbol id="i-sound" viewBox="0 0 24 24"><path d="M4 9.4h3.4L12 5.6v12.8l-4.6-3.8H4z" fill="url(#gChrome)"/><path d="M15 8.6a5 5 0 0 1 0 6.8M17.8 6.2a8.4 8.4 0 0 1 0 11.6" fill="none" stroke="#7fd8ff" stroke-width="1.5" stroke-linecap="round"/></symbol>
@@ -941,8 +1008,8 @@
   <symbol id="i-crap" viewBox="0 0 24 24"><rect x="2.4" y="6.2" width="10.2" height="10.2" rx="2.3" fill="#f7f9fd" stroke="#9fb0c4" stroke-width=".8"/><rect x="11.2" y="7.4" width="10.2" height="10.2" rx="2.3" fill="#eef3fa" stroke="#9fb0c4" stroke-width=".8"/><g fill="#14181f"><circle cx="5.6" cy="9.4" r="1.05"/><circle cx="9.4" cy="13.2" r="1.05"/><circle cx="14.4" cy="10.6" r="1.05"/><circle cx="18.4" cy="14.6" r="1.05"/><circle cx="14.4" cy="14.6" r="1.05"/></g></symbol>
   <symbol id="i-rr" viewBox="0 0 24 24"><circle cx="12" cy="12.6" r="8.4" fill="url(#gChrome)" stroke="#5b6b7f" stroke-width=".9"/><g fill="#101720"><circle cx="12" cy="6.2" r="1.9"/><circle cx="17.6" cy="9.4" r="1.9"/><circle cx="17.6" cy="15.8" r="1.9"/><circle cx="12" cy="19" r="1.9"/><circle cx="6.4" cy="15.8" r="1.9"/><circle cx="6.4" cy="9.4" r="1.9"/></g><circle cx="12" cy="6.2" r="1.15" fill="url(#gGold)"/><circle cx="12" cy="12.6" r="2.2" fill="#2b3646" stroke="url(#gChrome)" stroke-width=".9"/><path d="M12 1.4l2.6 3.4h-5.2z" fill="url(#gRed)"/></symbol>
   <symbol id="i-bac" viewBox="0 0 24 24"><rect x="4" y="4.6" width="9.6" height="13.4" rx="1.8" transform="rotate(-11 8.8 11.3)" fill="#f2f6fc" stroke="#9fb0c4" stroke-width=".8"/><rect x="9.6" y="5" width="9.8" height="13.8" rx="1.8" fill="#ffffff" stroke="#9fb0c4" stroke-width=".8"/><text x="14.5" y="12" font-size="6" font-weight="700" text-anchor="middle" fill="#b3242e">9</text><text x="14.5" y="17.6" font-size="5.6" text-anchor="middle" fill="#1b1b22">♦</text><circle cx="5.6" cy="19.6" r="2.4" fill="url(#gGold)" stroke="#8a5b00" stroke-width=".6"/></symbol>
-  <symbol id="i-sic" viewBox="0 0 24 24"><g fill="#f7f9fd" stroke="#9fb0c4" stroke-width=".8"><rect x="2.2" y="7.6" width="8.4" height="8.4" rx="1.8"/><rect x="8" y="4.4" width="8.4" height="8.4" rx="1.8"/><rect x="13.6" y="8.6" width="8.4" height="8.4" rx="1.8"/></g><g fill="#14181f"><circle cx="5" cy="10.4" r=".9"/><circle cx="7.8" cy="13.2" r=".9"/><circle cx="10.8" cy="7.2" r=".9"/><circle cx="13.6" cy="10" r=".9"/><circle cx="16.4" cy="11.4" r=".9"/><circle cx="19.2" cy="14.2" r=".9"/><circle cx="17.8" cy="14.2" r=".9"/></g></symbol>
-  <symbol id="i-ken" viewBox="0 0 24 24"><rect x="2.6" y="3.4" width="18.8" height="17.2" rx="2.4" fill="#0f3a2a" stroke="url(#gChrome)" stroke-width=".9"/><g fill="#8ff0c8"><circle cx="6.4" cy="7" r="1"/><circle cx="10" cy="7" r="1"/><circle cx="13.6" cy="7" r="1"/><circle cx="17.2" cy="7" r="1"/><circle cx="6.4" cy="10.6" r="1"/><circle cx="13.6" cy="10.6" r="1"/><circle cx="6.4" cy="14.2" r="1"/><circle cx="10" cy="14.2" r="1"/><circle cx="17.2" cy="14.2" r="1"/><circle cx="10" cy="10.6" r="1" opacity=".45"/><circle cx="17.2" cy="10.6" r="1" opacity=".45"/><circle cx="13.6" cy="14.2" r="1" opacity=".45"/><circle cx="6.4" cy="17.8" r="1" opacity=".45"/><circle cx="10" cy="17.8" r="1" opacity=".45"/><circle cx="13.6" cy="17.8" r="1" opacity=".45"/><circle cx="17.2" cy="17.8" r="1" opacity=".45"/></g><circle cx="10" cy="10.6" r="3" fill="none" stroke="url(#gGold)" stroke-width="1.4"/></symbol>
+  <symbol id="i-sic" viewBox="0 0 24 24"><g stroke="#8fa3bd" stroke-width=".9"><rect x="1.6" y="7.2" width="9" height="9" rx="2.2" fill="#f7f9fd"/><rect x="7.4" y="3.2" width="9" height="9" rx="2.2" fill="#ffffff"/><rect x="13.2" y="9" width="9" height="9" rx="2.2" fill="#eef2f8"/></g><g fill="#14181f"><circle cx="6.1" cy="11.7" r="1.5"/><circle cx="10.2" cy="6" r="1.35"/><circle cx="13.6" cy="9.4" r="1.35"/><circle cx="9.6" cy="6.4" r="1.35"/><circle cx="15.6" cy="11.4" r="1.35"/><circle cx="19.8" cy="15.6" r="1.35"/></g></symbol>
+  <symbol id="i-ken" viewBox="0 0 24 24"><rect x="1.8" y="3" width="20.4" height="18" rx="3.6" fill="#0f3a2a" stroke="#4fd6a0" stroke-width="1"/><g fill="#6fe3b4"><circle cx="6" cy="7.4" r="1.35"/><circle cx="12" cy="7.4" r="1.35"/><circle cx="18" cy="7.4" r="1.35"/><circle cx="6" cy="12" r="1.35"/><circle cx="12" cy="12" r="1.35"/><circle cx="18" cy="12" r="1.35"/><circle cx="6" cy="16.6" r="1.35"/><circle cx="12" cy="16.6" r="1.35"/><circle cx="18" cy="16.6" r="1.35"/></g><circle cx="12" cy="12" r="3.2" fill="none" stroke="url(#gGold)" stroke-width="1.9"/></symbol>
 </defs></svg>
 
 <header class="topbar">
@@ -955,7 +1022,7 @@
     <span class="wpill">现金 <b id="w-cash">$500</b></span>
     <span class="wpill debt">负债 <b id="w-loan">$0</b></span>
     <span class="wpill ready" id="w-ci-pill">签到 <b id="w-ci">可签到</b></span>
-    <button class="wbtn2" id="w-checkin">签到 +$50</button>
+    <button class="wbtn2" id="w-checkin">签到 +<em data-const="checkinUSD" style="font-style:normal">$1,000</em></button>
     <button class="wbtn2 ghost" id="w-open">钱包／贷款</button>
   </div>
   <nav class="tabs">
@@ -984,7 +1051,7 @@
         <h1 class="casino-sign"><em>KouKi&#39;s</em>赌 场<span>CASINO</span></h1>
         <div class="marquee" id="hero-marquee"></div>
         <p>十二台机台：柏青哥、老虎机、转盘、21 点、轮盘、视频扑克、双骰、德州扑克、六弹舱、百家乐、骰宝、基诺。
-           全场 1 筹码 = $1，统一从你的钱包结算：开局 $500、贷款额度 $5,000，每天签到 $50。</p>
+           全场 1 筹码 = $1，统一从你的钱包结算：开局 <em data-const="initCash" style="font-style:normal">$500</em>、贷款额度 <em data-const="loanLimit" style="font-style:normal">$5,000</em>，每天签到 <em data-const="checkinUSD" style="font-style:normal">$1,000</em>。</p>
         <p class="hero-guide" id="hero-guide"></p>
       </div>
       <div class="standee hero-avatar sky-avatar idle" id="hero-standee" title="点她一下">
@@ -1107,9 +1174,10 @@
       <div class="cas-hub">
         <div>
           <h3>KouKi&#39;s 赌场 · 玩家钱包</h3>
-          <p>全场只有一本账：<b>钱包现金</b>。每位玩家开局 <b>$500</b>，贷款额度 <b>$5,000</b>（无利息，随借随还）；
-             12 台机台都从钱包扣款、派彩直接进钱包。每天可<b>签到领 $50</b>；身上有贷款时，每次进账会自动以
-             <b>10% 还贷</b>；资金耗尽破产时还有 <b>50%</b> 概率拿到 <b>$100 救济金</b>。
+          <p>全场只有一本账：<b>钱包现金</b>。每位玩家开局 <b data-const="initCash">$500</b>，贷款额度 <b data-const="loanLimit">$5,000</b>（无利息，随借随还）；
+             12 台机台都从钱包扣款、派彩直接进钱包。每天可<b>签到领 <span data-const="checkinUSD">$1,000</span></b>；身上有贷款时，每次进账会自动以
+             <b><span data-const="repayP">10</span>% 还贷</b>；当「现金＋可借额度」≤ <span data-const="brokeLimit">$10</span> 判定破产，此时有
+             <b><span data-const="reliefP">70</span>%</b> 概率拿到 <b><span data-const="reliefUSD">$100</span> 救济金</b>。
              柏青哥／老虎机／转盘可在机台按「兑现」换回现金，离开机台会自动兑现。</p>
           <div class="row" style="margin-top:10px">
             <button class="gold" id="open-wallet-lobby" style="flex:0 0 auto">打开钱包／贷款面板</button>
@@ -1956,16 +2024,17 @@
       <div class="wbox"><span>可借额度</span><b id="w-avail">$0</b></div>
       <div class="wbox"><span>净资产</span><b id="w-net">$0</b></div>
       <div class="wbox"><span>在场余额</span><b id="w-ontable">$0</b></div>
-      <div class="wbox"><span>救济金</span><b id="w-relief">就绪</b></div>
+      <div class="wbox"><span>救济金（<em data-const="reliefP" style="font-style:normal">70</em>%）</span><b id="w-relief">就绪</b></div>
+      <div class="wbox"><span>破产线判定值</span><b id="w-broke">$0</b></div>
     </div>
 
     <h3>每日签到（每个自然日一次 ・ 按网站时间）</h3>
     <div class="wrow">
-      <button class="wbtn2" id="w-checkin2">签到 +$50</button>
+      <button class="wbtn2" id="w-checkin2">签到 +<em data-const="checkinUSD" style="font-style:normal">$1,000</em></button>
       <span class="hint" id="w-ci2" style="align-self:center">—</span>
     </div>
 
-    <h3>贷款（无利息 ・ 每次进账自动以 10% 还贷）</h3>
+    <h3>贷款（无利息 ・ 每次进账自动以 <em data-const="repayP" style="font-style:normal">10</em>% 还贷）</h3>
     <div class="wrow">
       <input class="winput" id="w-amt" type="number" min="1" step="50" value="500" aria-label="金额">
       <button class="wbtn2" id="w-borrow">借款</button>
@@ -1980,10 +2049,14 @@
 
     <h3>规则说明</h3>
     <ul class="hint" style="margin:6px 0 0;padding-left:18px;line-height:1.85">
-      <li>每位玩家初始资金 <b>$500</b>，贷款初始额度 <b>$5,000</b>（无利息，随借随还，还清后额度自动恢复）。</li>
-      <li><b>每日签到</b>可得 <b>$50</b>，每个自然日一次；能否签到与倒计时都按<b>网站时间</b>（本机日期 00:00 刷新）判定。</li>
-      <li>身上有贷款时，<b>每次进账的 10% 自动还贷</b>：赢利、机台兑现、签到、救济金都算进账（押注退回与和局退本金不算）。</li>
-      <li>破产（现金与在场余额皆为 0）时，有 <b>50%</b> 概率获得 <b>$100 救济金</b>。救济金<b>不会连续触发</b>——触发后需要先再次获得金钱（非救济金），之后再次破产才会重新回到 50% 判定。</li>
+      <li>每位玩家初始资金 <b data-const="initCash">$500</b>，贷款初始额度 <b data-const="loanLimit">$5,000</b>（无利息，随借随还，还清后额度自动恢复）。</li>
+      <li><b>每日签到</b>可得 <b data-const="checkinUSD">$1,000</b>，每个自然日一次；能否签到与倒计时都按<b>网站时间</b>（本机日期 00:00 刷新）判定。</li>
+      <li>身上有贷款时，<b>每次进账的 <span data-const="repayP">10</span>% 自动还贷</b>：赢利、机台兑现、签到、救济金都算进账（押注退回与和局退本金不算）。</li>
+      <li>破产判定：<b>钱包现金 ＋ 贷款还能借的额度 ≤ <span data-const="brokeLimit">$10</span></b>。此时有
+          <b><span data-const="reliefP">70</span>%</b> 概率获得 <b><span data-const="reliefUSD">$100</span> 救济金</b>（看板娘会强制出来说明规则）。</li>
+      <li>救济金<b>不会连续触发</b>——触发后需要先再次获得金钱（非救济金），之后再次破产才会重新回到
+          <span data-const="reliefP">70</span>% 判定。</li>
+      <li>好感度：满值 <b>200%</b>，只有<b>赢下一局</b>或<b>差一点就赢</b>才会增加（每局最多 +2）。</li>
       <li>柏青哥／老虎机／转盘是独立机台：可在机台按 <b>兑现</b> 把球・メダル・分数换回现金，<b>离开机台时会自动兑现</b>。</li>
       <li>每张赌桌都有<b>标准注码</b>与<b>高注模式</b>两档，可按自己的资金量切换。</li>
     </ul>
@@ -2004,9 +2077,10 @@
   const KEY = 'kouki.casino.wallet.v2';
   const INIT_CASH = 500;      // 每位玩家初始资金
   const LOAN_LIMIT = 5000;    // 贷款初始额度
-  const CHECKIN_USD = 50;     // 每日签到
+  const CHECKIN_USD = 1000;   // 每日签到（$1,000）
   const RELIEF_USD = 100;     // 破产救济金
-  const RELIEF_P = 0.5;       // 救济金触发概率
+  const RELIEF_P = 0.7;       // 救济金触发概率（70%）
+  const BROKE_LIMIT = 10;     // 破产线：现金 + 可借额度 ≤ $10
   const REPAY_RATE = 0.10;    // 进账自动还贷比例
   const S = { cash: INIT_CASH, loan: 0, lastCheckIn: '', armed: true, reliefs: 0,
               checkins: 0, income: 0, log: [], broke: false };
@@ -2196,21 +2270,41 @@
     }catch(e){}
   }
   function bankruptTick(){
-    const total = S.cash * 100 + onTable();
-    if(total > 0){ S.broke = false; return; }
+    /* 破产判定：钱包里的钱 + 贷款还能借的额度，两者之和 ≤ $10 */
+    const total = r2(S.cash + available());
+    if(total > BROKE_LIMIT){ S.broke = false; return; }
     if(S.broke) return;
     S.broke = true;
     if(S.armed && Math.random() < RELIEF_P){
       S.armed = false; S.reliefs++;
       const repay = earn(RELIEF_USD, 'relief');
+      if(window.MascotRelief) window.MascotRelief(RELIEF_USD, repay);
       toast('破产救济金 +' + fmtUSD(RELIEF_USD) + (repay ? '（自动还贷 ' + fmtUSD(repay) + '）' : ''));
     } else {
-      toast('资金耗尽 — 可在「钱包／贷款」借款，或明天签到领取 $50');
+      toast('资金耗尽（现金＋可借额度 ≤ $10）— 可在「钱包／贷款」借款，或明天签到领 $1,000');
     }
     save(); refresh();
   }
   /* ---------- UI ---------- */
   function set(id, v){ const e = $(id); if(e) e.textContent = v; }
+  /* 把静态文案里的数字统一交给常量渲染：以后改概率/金额不会再有漏改的角落 */
+  let CONST_ELS = null;
+  function fillConsts(){
+    if(!CONST_ELS) CONST_ELS = document.querySelectorAll ? document.querySelectorAll('[data-const]') : [];
+    const map = {
+      initCash: fmtUSD(INIT_CASH),
+      loanLimit: fmtUSD(LOAN_LIMIT),
+      checkinUSD: fmtUSD(CHECKIN_USD),
+      repayP: String(Math.round(REPAY_RATE * 100)),
+      brokeLimit: fmtUSD(BROKE_LIMIT),
+      reliefP: String(Math.round(RELIEF_P * 100)),
+      reliefUSD: fmtUSD(RELIEF_USD)
+    };
+    for(let i = 0; i < CONST_ELS.length; i++){
+      const v = map[CONST_ELS[i].getAttribute('data-const')];
+      if(v != null && CONST_ELS[i].textContent !== v) CONST_ELS[i].textContent = v;
+    }
+  }
   function after(){
     refresh(); save();
     if(window.onWalletChange && !changePending){
@@ -2223,6 +2317,7 @@
   }
   function refresh(){
     const av = available(), ot = onTable()/100;
+    fillConsts();
     set('w-cash', fmtUSD(S.cash));
     set('w-loan', fmtUSD(S.loan));
     set('w-cash2', fmtUSD(S.cash));
@@ -2231,14 +2326,15 @@
     const nw = netWorth();
     set('w-net', (nw < 0 ? '-' : '') + fmtUSD(Math.abs(nw)));
     set('w-ontable', fmtUSD(ot));
-    set('w-relief', S.armed ? '就绪' : '需再次进账');
+    set('w-relief', S.armed ? ('就绪（' + Math.round(RELIEF_P * 100) + '% 触发）') : '需再次进账');
+    set('w-broke', fmtUSD(r2(S.cash + available())));
     const ci = canCheckIn();
     set('w-ci', ci ? '可签到' : '已签到');
     const p1 = $('w-ci-pill'); if(p1) p1.classList.toggle('ready', ci);
     const b1 = $('w-checkin'), b2 = $('w-checkin2');
     if(b1) b1.disabled = !ci;
     if(b2) b2.disabled = !ci;
-    set('w-ci2', ci ? '今天还没签到 — 现在签到可得 $50' : ('今天已签到，距下次签到 ' + hhmm(msToMidnight())));
+    set('w-ci2', ci ? '今天还没签到 — 现在签到可得 $1,000' : ('今天已签到，距下次签到 ' + hhmm(msToMidnight())));
     const lg = $('w-log');
     if(lg) lg.innerHTML = S.log.length
       ? S.log.map(l => '<div class="' + (l.cls || '') + '"><span>' + l.text + '</span><b>' + (l.amount || '') + '</b></div>').join('')
@@ -2270,7 +2366,7 @@
   }, true);
   load();
   window.WALLET = {
-    S, INIT_CASH, LOAN_LIMIT, CHECKIN_USD, RELIEF_USD, REPAY_RATE,
+    S, INIT_CASH, LOAN_LIMIT, CHECKIN_USD, RELIEF_USD, RELIEF_P, REPAY_RATE, BROKE_LIMIT,
     earn, settle, refund, spend, setCash, borrow, repay, checkIn, canCheckIn,
     onTable, netWorth, available, refresh, refreshClock, save, load, reset, open, close, toast, fmtUSD
   };
@@ -2332,7 +2428,7 @@
   const UA = (typeof navigator !== 'undefined' && navigator.userAgent) || '';
   const mobile = isCoarse || /Android|iPhone|iPad|iPod|Mobile|HarmonyOS/i.test(UA);
   QUAL.level = mobile ? 1 : 2;                 // 手机默认中画质
-  QUAL.dpr = mobile ? Math.min(1.5, window.devicePixelRatio || 1) : Math.min(2, window.devicePixelRatio || 1);
+  QUAL.dpr = mobile ? Math.min(1.25, window.devicePixelRatio || 1) : Math.min(2, window.devicePixelRatio || 1);
 
   /* 用「每帧实际绘制耗时」判定，和屏幕刷新率无关 */
   function judge(ms){
@@ -2392,6 +2488,8 @@
     setLevel(n){ QUAL.level = Math.max(0, Math.min(2, n)); onLevel(); }
   };
   onLevel();
+  /* 移动端最贵的绘制操作是 shadowBlur（每帧做高斯模糊），低画质档直接关掉 */
+  window.FX = n => (QUAL.level >= 2 ? n : 0);
 })();
 </script>
 <script>
@@ -2419,28 +2517,54 @@
       name:'青云天空', sub:'SEIUN SKY ・ 遊技场 看板娘',
       greet:['唔——欢迎光临。这里是赌场大厅，十二台机台都能看，需要讲解就叫我。',
              '唔…我是这里的看板娘青云天空，负责带路和讲规则，不负责替你押注哦。',
-             '欢迎回来。今天想先从哪一台看起？'],
+             '欢迎回来。今天想先从哪一台看起？',
+             '唔、你来得正好，我刚把台词背熟了——啊，没什么，当我没说。'],
       tip:['唔…这台机的手柄大概调到 70% 前后最好使，太弱的话球会滚回来。',
            '老虎机记得开「目押辅助」，绿灯亮的时候再按停——那是能拉进小役的位置。',
            '德州扑克那桌，翻牌前手牌不好就先弃，规则上这样最省。',
            '轮盘红黑各 47%，剩下那 5% 是店里的抽水，赔率表上写着的。',
            '六弹舱那台…我路过都绕远一点。你要去的话，记得先看一遍赔率表。',
-           '唔…困了。有事摇铃叫我，我在后面打个盹。'],
-      win:['嗯っ！出大当了——恭喜你！',
-           '嗯っ、嗯っ！这台亮起来了！',
-           '中了中了！我帮你按铃叫服务生来点灯～'],
-      lose:['唔…差一点。要不要我把规则再说一遍？',
-            '唔——没中。先歇一会儿嘛，我去给你倒杯水。',
+           '唔…困了。有事摇铃叫我，我在后面打个盹。',
+           '钱快见底的时候先别慌——贷款还剩多少额度，钱包面板上写着呢。',
+           '签到记得每天领，$1,000 够你玩很久了——别忘了我提醒过你。'],
+      win:['嗯っ！这手真漂亮——我在旁边都替你紧张了。',
+           '赢了赢了！你看，我就说这局有戏。',
+           '嗯っ、嗯っ！收下吧，这是你应得的。',
+           '呼——看你赢我就放心了。要不要再来一把？'],
+      near:['唔……就差一点点！刚才那个真的是擦边球。',
+            '哎——差一格！这种时候最容易上头了，先深呼吸。',
+            '就差那么一点点……再来一次说不定就中了。',
+            '唔、我都有点替你可惜了。要不算了？——我随便说说的，继续吧。'],
+      lose:['唔…没中。要不要我把规则再说一遍？',
+            '唔——这局不顺，先歇一会儿嘛，我去给你倒杯水。',
             '别急，机器又不会跑掉。'],
       idle:['唔…（她靠着柜台打瞌睡）',
             'ん…今天店里好安静呢。',
-            '等下班我要去钓鱼，你要不要一起？——开玩笑的，你还得看店。']
+            '等下班我要去钓鱼，你要不要一起？——开玩笑的，你还得看店。',
+            '唔…我数了一下，走廊那头今天一直很安静。',
+            '（她偷偷把你台面上的筹码摆整齐了）'],
+      relief:['等、等一下——你先别急着走。',
+              '你现在的现金，加上还能借的额度，已经不到 $10 了，所以系统判定破产，救济金已经打进你的钱包：$100。',
+              '规则很简单：现金 ＋ 可借额度 ≤ $10 才算破产，这时候有 70% 概率能拿到 $100。',
+              '拿到之后要先再赚到钱，才会重新有机会触发哦。',
+              '……好了，去玩吧，我在这儿看着你。'],
+      ms:{ 50:'唔…你今天待得挺久嘛，好感度 50% 了哦。我记着的。',
+           100:'一半了！……我是说好感度。你还挺执着的。',
+           150:'唔哇，150% 了……你这样我都不好意思摸鱼了。',
+           200:'满、满了！200%！那……以后你来，我第一个跟你打招呼，说好了。' }
+      ,hi:['唔…你来了。今天想玩哪台？我给你留了最好的位置。',
+           '（她看到你就把钓鱼竿收了起来）……没什么，本来就该上班的。',
+           '你上次问的那台，我把要点写在纸条上了——就压在你手边。'],
+      touch:['唔！？——别突然摸头啦，我在上班……（小声）不过也没说不可以。',
+             '（她被戳得一个踉跄）唔、你手劲好大…',
+             '再戳一下我可要收费了哦——用好感度付。']
     },
     saya: {
       name:'沙耶', sub:'SAYA ・ 夜之角的看板娘',
       greet:['……你来了。这里的灯很暗，很适合听歌。',
              '欢迎。弹舱已经上好了，你想从第几发开始？',
-             '我一直在的哦。你什么时候来，我都在。'],
+             '我一直在的哦。你什么时候来，我都在。',
+             '……脚步声我认得。是你。'],
       spin:['弹舱转起来了……真好听。',
             '嘘——听，它在转。',
             '每一次停下的位置，都是它自己选的。'],
@@ -2449,19 +2573,39 @@
              '还没到呢。……再等等。'],
       bang:['第 {n} 发就响了呀。……谢谢你陪我玩。',
             '响了。……你押的是第 {n} 发吗？那可真巧。'],
-      win:['赢了啊。……你笑起来，比它好听。',
-           '筹码多起来了呢。……要再来一次吗？我一直有空。'],
+      win:['……又赢了呢。你笑起来的样子，比筹码好看。',
+           '钱变多了。……要再来一次吗？我一直有空。',
+           '……嗯。这一局，我替你高兴。'],
+      near:['……就差一点。你刚才的心跳，我听见了。',
+            '差一格……没关系，夜还很长。',
+            '……差一点点就中了呢。再来一次吧，我陪你。',
+            '……可惜。不过你皱眉的样子，我也喜欢看。'],
       lose:['没关系。……我陪着你，晚一点再走也可以。',
             '没中也一样。……那就再听一会儿歌吧。'],
       idle:['（她轻轻哼着一段不成调的歌）',
             '……夜还很长。',
-            '这里的空气，只有我闻得到。']
+            '这里的空气，只有我闻得到。',
+            '……你不在的时候，我就数弹舱转了几圈。',
+            '（她把手放在玻璃上，像是在确认什么）'],
+      relief:['……别急着走。',
+              '你的现金和还能借的额度加起来，已经不到 $10 了。所以救济金已经放进口袋：$100。',
+              '……规则很简单：现金加可借额度 ≤ $10 算破产，这时候有七成机会拿到 $100。',
+              '拿过一次之后，要先再赚到钱，才可能再拿。',
+              '……去吧。我还在。'],
+      ms:{ 50:'……50 了。你来的次数，我都有数着。',
+           100:'……一半了呢。你好像真的不怕我。',
+           150:'……150。夜之角的风都记得你的脚步声了。',
+           200:'……200。满出来了。……那我就不用再假装只是路过你了。' }
+      ,hi:['……你来了。我把弹舱擦干净了，就等你。',
+           '……今天要不要多待一会儿？我不会催你走的。',
+           '（她把一段旋律哼了一半，停下来看你）……剩下的一半，等你想听的时候再唱。'],
+      touch:['……嗯。再碰一下也可以。',
+             '（她没有躲开）……你的手，是暖的。',
+             '……别停。']
     }
   };
-  const AFF_UNLOCK = {
-    sky:  { 12:'（她突然睁大眼睛）唔…你今天待得比我想的久诶，要不要我陪你到最后？' },
-    saya: { 12:'你来这么多次了……那我告诉你一个秘密：我其实，一直都在等有人陪我玩到最后。' }
-  };
+  const AFF_MAX = 200;                        // 满好感度 200%
+  const AFF_MS = [50, 100, 150, 200];         // 里程碑
   let AC = null;
   function ac(){
     if(AC === null){ try{ AC = new (window.AudioContext || window.webkitAudioContext)(); }catch(e){ AC = false; } }
@@ -2523,19 +2667,64 @@
   }
   let cur = 'sky';
   const aff = { sky:0, saya:0 };
-  let typer = null;
+  let typer = null, hideTimer = null, lastAffAt = 0;
+  function affSave(){
+    try{ localStorage.setItem('kouki.aff.v1', JSON.stringify(aff)); }catch(e){}
+  }
+  (function affLoad(){
+    try{
+      const o = JSON.parse(localStorage.getItem('kouki.aff.v1') || '{}');
+      if(o && typeof o === 'object'){
+        if(typeof o.sky === 'number') aff.sky = Math.max(0, Math.min(AFF_MAX, o.sky));
+        if(typeof o.saya === 'number') aff.saya = Math.max(0, Math.min(AFF_MAX, o.saya));
+      }
+    }catch(e){}
+  })();
   function paintAff(){
     const bar = $('m-aff'), txt = $('m-afftxt');
     if(bar){
-      bar.style.width = Math.min(100, aff[cur]) + '%';
+      bar.style.width = (aff[cur] / AFF_MAX * 100).toFixed(1) + '%';   // 满好感度 200%
       bar.className = cur === 'saya' ? 'saya' : '';
     }
-    if(txt) txt.textContent = '好感度 ' + aff[cur] + (cur === 'saya' ? ' ・ 夜之角' : ' ・ 遊技场');
+    if(txt) txt.textContent = '好感度 ' + aff[cur] + ' / ' + AFF_MAX +
+      (cur === 'saya' ? ' ・ 夜之角' : ' ・ 遊技场');
   }
-  function say(text){
+  /* 好感度只从「赢下比赛 / 差一点赢」获得，每次结算最多 +2，且 0.9 秒内不重复计分 */
+  function addAff(n){
+    n = Math.min(2, n || 0);
+    if(n <= 0) return;
+    const now = performance.now();
+    if(now - lastAffAt < 900) return;
+    lastAffAt = now;
+    const before = aff[cur];
+    aff[cur] = Math.min(AFF_MAX, aff[cur] + n);
+    if(aff[cur] !== before){ paintAff(); affSave(); }
+    for(let i = 0; i < AFF_MS.length; i++){
+      const t = AFF_MS[i];
+      if(before < t && aff[cur] >= t){
+        const line = (LINES[cur].ms || {})[t];
+        if(line) setTimeout(() => say(line), 1100);
+        break;
+      }
+    }
+  }
+  function hideBubble(){
+    const b = $('m-bubble');
+    if(!b) return;
+    b.classList.add('hide');
+    setTimeout(() => {
+      b.classList.remove('alert');
+      if(dock.classList.contains('force')) dock.classList.remove('force');
+      b.classList.remove('hide');
+    }, 380);
+  }
+  function say(text, opts){
     const b = $('m-bubble');
     if(!b) return;
     if(typer) clearInterval(typer);
+    if(hideTimer) clearTimeout(hideTimer);
+    b.classList.remove('hide');
+    if(!(opts && opts.alert)) b.classList.remove('alert');
     b.innerHTML = '<span id="m-txt"></span><span class="cursor">▍</span>';
     const t = $('m-txt');
     let i = 0;
@@ -2545,10 +2734,22 @@
       if(i % 3 === 0) blip(cur === 'saya' ? 600 + Math.random()*140 : 760 + Math.random()*240, 0.02, 'triangle', 0.012);
       if(i >= text.length){ clearInterval(typer); typer = null; }
     }, 32);
-    aff[cur]++;
-    paintAff();
-    const un = AFF_UNLOCK[cur];
-    if(un && un[aff[cur]]) setTimeout(() => say(un[aff[cur]]), text.length * 32 + 700);
+    /* 说完停一会儿就自然收起，避免长期压着牌桌 */
+    const hold = (opts && opts.hold) || 3600;
+    hideTimer = setTimeout(hideBubble, text.length * 32 + hold);
+  }
+  /* 连续台词（救济金说明分成几句依次说） */
+  function saySeq(lines, opts){
+    let i = 0;
+    const step = () => {
+      if(i >= lines.length) return;
+      say(lines[i], { alert: opts && opts.alert, hold: (opts && opts.hold) || 1500 });
+      const wait = lines[i].length * 32 + 900;
+      i++;
+      if(i < lines.length) setTimeout(step, wait);
+      else if(hideTimer) { clearTimeout(hideTimer); hideTimer = setTimeout(hideBubble, wait + ((opts && opts.hold) || 3600)); }
+    };
+    step();
   }
   function setChar(id){
     if(!LINES[id]) return;
@@ -2561,13 +2762,18 @@
     if($('m-card')) $('m-card').className = 'mascot-card' + (id === 'saya' ? ' saya' : '');
     if($('m-bubble')) $('m-bubble').className = 'mascot-bubble' + (id === 'saya' ? ' saya' : '');
     paintAff();
-    const pool = L.greet;
-    say(pool[Math.floor(Math.random() * pool.length)]);
+    if(!charSeen[id] || Math.random() < 0.35){
+      const pool = L.greet;
+      say(pool[Math.floor(Math.random() * pool.length)]);
+    }
+    charSeen[id] = true;
   }
+  const charSeen = { sky:false, saya:false };
   function react(kind, data){
     const L = LINES[cur];
     let pool = null;
-    if(kind === 'jackpot' || kind === 'bonus') pool = L.win;
+    if(kind === 'jackpot' || kind === 'bonus' || kind === 'win') pool = L.win;
+    else if(kind === 'near') pool = L.near;
     else if(kind === 'spin-miss') pool = (cur === 'saya' ? L.blank : L.lose);
     else if(kind === 'rr-spin') pool = L.spin;
     else if(kind === 'rr-settle'){
@@ -2619,9 +2825,48 @@
   };
   window.onGameEvent = react;
   window.MascotSay = say;
+  /* 游戏结算 → 好感度：只有「赢下这一局」或「差一点就赢」才加，每次最多 +2 */
+  window.MascotRound = function(game, net, stake, near){
+    if(typeof net !== 'number') return;
+    if(net > 0){
+      const big = stake > 0 && net >= stake * 3;
+      addAff(big ? 2 : 1);
+      if(Math.random() < (big ? 0.9 : 0.4)) react(big ? 'jackpot' : 'win', { game:game });
+    } else if(near){
+      addAff(1);
+      if(Math.random() < 0.55) react('near', { game:game });
+    }
+  };
+  /* 测试/调试用：读取当前好感度 */
+  window.MascotAff = function(){ return { sky:aff.sky, saya:aff.saya, cur:cur, max:AFF_MAX }; };
+  window.MascotAff.set = function(o){
+    if(!o) return;
+    if(typeof o.sky === 'number') aff.sky = Math.max(0, Math.min(AFF_MAX, o.sky));
+    if(typeof o.saya === 'number') aff.saya = Math.max(0, Math.min(AFF_MAX, o.saya));
+    paintAff(); affSave();
+  };
+  /* 破产救济金：强制弹出对话框讲解（收起状态也会弹），讲完自动关闭 */
+  window.MascotRelief = function(amount){
+    const L = LINES[cur] || LINES.sky;
+    dock.classList.add('force');
+    const b = $('m-bubble');
+    if(b){
+      b.classList.add('alert');
+      b.onclick = () => { if(b.classList.contains('alert')) hideBubble(); };   // 点一下可提前收起
+    }
+    saySeq(L.relief, { alert:true, hold:5200 });
+    popEl($('m-art'));
+    popEl($('hero-standee'));
+    flashSaya();
+  };
   if($('m-say')) $('m-say').onclick = () => {
     const L = LINES[cur];
-    const pool = (Math.random() < 0.55 ? L.idle : (L.tip || L.greet));
+    const r = Math.random();
+    let pool;
+    if(r < 0.34) pool = L.idle;
+    else if(r < 0.62) pool = L.greet;
+    else if(r < 0.82) pool = L.tip || L.greet;
+    else pool = aff[cur] >= 100 ? (L.hi || L.idle) : L.win;
     say(pool[Math.floor(Math.random() * pool.length)]);
   };
   if($('m-tip')) $('m-tip').onclick = () => {
@@ -2633,6 +2878,23 @@
     dock.classList.toggle('mini');
     e.currentTarget.textContent = dock.classList.contains('mini') ? '展开' : '收起';
   };
+  /* 戳一下头像 = 新的互动台词 */
+  function touchChar(){
+    const L = LINES[cur];
+    const pool = L.touch || L.idle;
+    say(pool[Math.floor(Math.random() * pool.length)]);
+    popEl($('m-art'));
+    blip(cur === 'saya' ? 520 : 880, 0.06, 'triangle', 0.02);
+  }
+  if($('m-art')) $('m-art').onclick = touchChar;
+  /* 偶尔主动搭话（只在看板娘展开状态下，免得打扰游玩） */
+  setInterval(() => {
+    if(document.hidden || dock.classList.contains('mini') || dock.classList.contains('force')) return;
+    if(Math.random() > 0.35) return;
+    const L = LINES[cur];
+    const pool = Math.random() < 0.6 ? L.idle : (L.hi || L.idle);
+    say(pool[Math.floor(Math.random() * pool.length)]);
+  }, 150000);
   if($('saya-melody')) $('saya-melody').onclick = e => toggleMelody(e.currentTarget);
   const mq = $('hero-marquee');
   if(mq){
@@ -2986,6 +3248,7 @@ function createPachinko(){
     msg:'', msgT:0, pops:[], flash:0, parts:[], shake:0, trail:[]
   };
   const KX = 452, KY = 758;
+  const FX = window.FX || (n => n);            // 低画质档返回 0，直接关掉阴影模糊
 
   /* ---------------- audio ---------------- */
   let AC = null;
@@ -3036,6 +3299,10 @@ function createPachinko(){
     if(x != null) G.pops.push({x, y, t:0, txt:'+'+n});
   }
   function spark(x, y, n, col, spd, up){
+    if(window.ENGINE && window.ENGINE.QUAL.level < 2){
+      n = Math.max(3, n >> 1);                 // 低画质：粒子减半
+      if(G.parts.length > 200) return;
+    }
     for(let i = 0; i < n; i++){
       const a = Math.random()*6.2832;
       const v = (spd || 95) * (0.35 + Math.random());
@@ -3071,7 +3338,7 @@ function createPachinko(){
       ctx.arc(pts[i][0], pts[i][1], rr, 0, 6.2832);
     }
     ctx.fillStyle = base;
-    ctx.shadowColor = base; ctx.shadowBlur = jack ? 14 : 9;
+    ctx.shadowColor = base; ctx.shadowBlur = FX(jack ? 14 : 9);
     ctx.fill();
     ctx.shadowBlur = 0;
     ctx.beginPath();
@@ -3253,11 +3520,16 @@ function createPachinko(){
       if(!s.stopped[1] && s.t >= s.t2){ s.stopped[1] = true; s.d[1] = s.out.d[1]; blip(1400,0.05,'square',0.04); }
       if(!s.stopped[2] && s.t >= s.t3){ s.stopped[2] = true; s.d[2] = s.out.d[2]; blip(1400,0.05,'square',0.04); }
       s.reachPhase = s.stopped[0] && s.stopped[1] && !s.stopped[2] && s.d[0] === s.d[1];
+      if(s.reachPhase) s.hadReach = true;                 // 两图柄对齐＝リーチ，算「差一点」
       if(s.t > s.t3 + 0.35){
         const wasHit = s.out.hit;
-        if(wasHit) beginJackpot(s);
+        if(wasHit){
+          beginJackpot(s);
+          if(window.MascotRound) window.MascotRound('pachinko', 60, 1, false);
+        }
         else {
           if(window.onGameEvent) window.onGameEvent('spin-miss');
+          if(window.MascotRound) window.MascotRound('pachinko', 0, 0, !!s.hadReach);
           G.phase = 'idle';
           if(G.mode === 'jitan' && G.jitanLeft <= 0){ G.mode = 'normal'; toast('时短结束', 1500); }
         }
@@ -3542,7 +3814,7 @@ function createPachinko(){
 
   function drawLCD(){
     // housing
-    ctx.save(); ctx.shadowColor = 'rgba(0,0,0,.65)'; ctx.shadowBlur = 20;
+    ctx.save(); ctx.shadowColor = 'rgba(0,0,0,.65)'; ctx.shadowBlur = FX(20);
     const g = ctx.createLinearGradient(0, 140, 0, 412);
     g.addColorStop(0,'#2a4f80'); g.addColorStop(.12,'#16283f'); g.addColorStop(1,'#0a141f');
     rrect(150, 172, 240, 240, 24); ctx.fillStyle = g; ctx.fill();
@@ -3636,7 +3908,7 @@ function createPachinko(){
         ctx.stroke();
       }
       ctx.beginPath(); ctx.arc(b.x, b.y, eng.BALL_R, 0, 6.2832);
-      ctx.shadowColor = 'rgba(0,0,0,.55)'; ctx.shadowBlur = 5; ctx.shadowOffsetY = 1.5;
+      ctx.shadowColor = 'rgba(0,0,0,.55)'; ctx.shadowBlur = FX(5); ctx.shadowOffsetY = 1.5;
       const g = ctx.createRadialGradient(b.x-2, b.y-2.4, 0.5, b.x, b.y, eng.BALL_R);
       g.addColorStop(0,'#ffffff'); g.addColorStop(.4,'#dfe8f5'); g.addColorStop(1,'#75808f');
       ctx.fillStyle = g; ctx.fill();
@@ -3814,7 +4086,7 @@ function createPachinko(){
     }
     const cost = n * G.rate;                      // 按实际球数计费，买入/兑现同价，杜绝套利
     if(!W.spend(cost/100, 'bet')){
-      toast('现金不足 — 可在「钱包／贷款」借款，或明天签到领 $50', 2200);
+      toast('现金不足 — 可在「钱包／贷款」借款，或明天签到领 $1,000', 2200);
       blip(220, 0.14, 'sawtooth', 0.04);
       return;
     }
@@ -3929,8 +4201,10 @@ function createPachinko(){
       put('lb-loan', WA.fmtUSD(WA.S.loan));
       put('lb-avail', WA.fmtUSD(WA.available()));
       put('lb-ontable', WA.fmtUSD(WA.onTable() / 100));
-      put('lb-checkin', WA.canCheckIn() ? '可签到 +$50' : '今天已签到');
-      put('lb-relief', WA.S.armed ? '就绪（50% 触发）' : '需再次进账');
+      put('lb-checkin', WA.canCheckIn() ? '可签到 +$1,000' : '今天已签到');
+      put('lb-relief', WA.S.armed
+        ? ('就绪（' + Math.round(WA.RELIEF_P * 100) + '% 触发）')
+        : '需再次进账');
     }
     if(window.onLobbyRefresh) window.onLobbyRefresh();
   }
@@ -3946,6 +4220,7 @@ function createPachinko(){
   ctx.textBaseline = 'middle';
 
   const SY = { RED:'red7', BLUE:'blue7', BAR:'bar', BELL:'bell', MELON:'melon', CHERRY:'cherry', REPLAY:'replay' };
+  const FX = window.FX || (n => n);
   const L = 21;
   const STRIPS = [
     [SY.RED,SY.BELL,SY.MELON,SY.BELL,SY.CHERRY,SY.REPLAY,SY.BELL,SY.BLUE,SY.BELL,SY.MELON,SY.REPLAY,SY.BELL,SY.CHERRY,SY.BELL,SY.BAR,SY.BELL,SY.MELON,SY.REPLAY,SY.BELL,SY.CHERRY,SY.BELL],
@@ -4149,6 +4424,19 @@ function createPachinko(){
     }
     const wn = medals * S.mult;            // 高注模式：派彩同步放大
     S.winLines = lines; S.win = wn;
+    /* 惜败判定：任一条有效线上出现「两颗相同」的有奖图案（差一颗就成线） */
+    let slotNear = false;
+    if(medals === 0 && !replay && !big && !reg){
+      for(const msym of [SY.RED, SY.BLUE, SY.BAR, SY.BELL, SY.MELON]){
+        for(let li = 0; li < LINES.length && !slotNear; li++){
+          const ln = LINES[li];
+          const s = [rows[ln.c[0][0]][ln.c[0][1]], rows[ln.c[1][0]][ln.c[1][1]], rows[ln.c[2][0]][ln.c[2][1]]];
+          if(s.filter(x => x === msym).length === 2) slotNear = true;
+        }
+        if(slotNear) break;
+      }
+    }
+    if(window.MascotRound) window.MascotRound('slot', wn - 3 * S.mult, 3 * S.mult, slotNear);
     if(medals > 0 || replay || big || reg) S.cnt['hit:' + role] = (S.cnt['hit:' + role] || 0) + 1;
     S.payout += wn; S.medals += wn;
     S.replayNext = replay;
@@ -4330,7 +4618,7 @@ function createPachinko(){
   }
   function drawReels(){
     ctx.save();
-    ctx.shadowColor = 'rgba(0,0,0,.85)'; ctx.shadowBlur = 20;
+    ctx.shadowColor = 'rgba(0,0,0,.85)'; ctx.shadowBlur = FX(20);
     ctx.fillStyle = '#07040d';
     roundRect(WIN.x-11, WIN.y-11, WIN.w+22, WIN.h+22, 17); ctx.fill();
     ctx.restore();
@@ -4383,7 +4671,7 @@ function createPachinko(){
       ctx.lineWidth = on ? 5 : 2;
       ctx.strokeStyle = ln.col;
       ctx.globalAlpha = on ? 1 : 0.2;
-      if(on){ ctx.shadowColor = ln.col; ctx.shadowBlur = 18; }
+      if(on){ ctx.shadowColor = ln.col; ctx.shadowBlur = FX(18); }
       ctx.beginPath();
       for(let k = 0; k < ln.c.length; k++){
         const x = WIN.x + ln.c[k][0]*RW + RW/2;
@@ -4460,7 +4748,7 @@ function createPachinko(){
       ctx.textAlign = 'center';
       ctx.font = '900 32px "Microsoft YaHei",sans-serif';
       ctx.fillStyle = '#ffd166';
-      ctx.shadowColor = '#ffd166'; ctx.shadowBlur = 20;
+      ctx.shadowColor = '#ffd166'; ctx.shadowBlur = FX(20);
       ctx.fillText('+' + S.win + ' 枚', SW/2, WIN.y + WIN.h + 46);
       ctx.restore();
       ctx.textAlign = 'left';
@@ -4582,7 +4870,7 @@ function createPachinko(){
     if(n <= 0) return;
     const cost = n * S.rate;
     if(!window.WALLET.spend(cost/100, 'bet')){
-      toastSlot('现金不足 — 可在「钱包／贷款」借款，或明天签到领 $50', 2200);
+      toastSlot('现金不足 — 可在「钱包／贷款」借款，或明天签到领 $1,000', 2200);
       beep(210, 0.14, 'sawtooth', 0.04);
       return;
     }
@@ -4653,6 +4941,7 @@ function createPachinko(){
   ctx.textBaseline = 'middle';
 
   const SYMS = [
+    /* 阴影模糊统一走 FX()，低画质档自动归零 */
     {id:'apple',  name:'苹果', odds:3,  n:7, c1:'#ff8a90', c2:'#a10d20'},
     {id:'orange', name:'橘子', odds:4,  n:5, c1:'#ffcf7a', c2:'#a85a00'},
     {id:'melon',  name:'西瓜', odds:5,  n:4, c1:'#8ff0a8', c2:'#0d5c34'},
@@ -4757,6 +5046,14 @@ function createPachinko(){
     if(pay > G.maxWin) G.maxWin = pay;
     G.winIdx = s.k;
     G.winFlash = 1;
+    /* 惜败判定：指针停在「押中图案隔壁那一格」 */
+    const wStaked = totalBet();
+    let wheelNear = false;
+    for(let d = -1; d <= 1; d += 2){
+      const adj = ORDER[(s.k + d + N) % N];
+      if((G.bets[adj] || 0) > 0) wheelNear = true;
+    }
+    if(window.MascotRound) window.MascotRound('wheel', pay - wStaked, wStaked, wheelNear);
     for(const k2 in G.bets) G.bets[k2] = 0;
     if(pay > 0){
       fanfare3();
@@ -5045,7 +5342,7 @@ function createPachinko(){
       const on = (i === lit) || (G.phase !== 'spin' && G.winIdx === i && G.winFlash > 0);
       ctx.beginPath(); ctx.arc(x, y, on ? 5.2 : 3.4, 0, 6.2832);
       ctx.fillStyle = on ? '#fff3c0' : 'rgba(255,209,102,.28)';
-      if(on){ ctx.shadowColor = '#ffd166'; ctx.shadowBlur = 14; }
+      if(on){ ctx.shadowColor = '#ffd166'; ctx.shadowBlur = FX(14); }
       ctx.fill(); ctx.shadowBlur = 0;
     }
     ctx.beginPath(); ctx.arc(CX, CY, R_IN, 0, 6.2832);
@@ -5134,7 +5431,7 @@ function createPachinko(){
     if(n <= 0) return;
     const cost = n * G.rate;
     if(!window.WALLET.spend(cost/100, 'bet')){
-      toastW('现金不足 — 可在「钱包／贷款」借款，或明天签到领 $50', 2200);
+      toastW('现金不足 — 可在「钱包／贷款」借款，或明天签到领 $1,000', 2200);
       beep(210, 0.14, 'sawtooth', 0.04);
       return;
     }
@@ -5209,6 +5506,7 @@ function createPachinko(){
   const $ = id => document.getElementById(id);
   const USD = window.USD || (c => '$' + (c/100).toFixed(2));
   const SUITS = ['♠','♥','♦','♣'];
+  const FX = window.FX || (n => n);
   const RANKS = ['A','2','3','4','5','6','7','8','9','10','J','Q','K'];
   const RV = {A:14,'2':2,'3':3,'4':4,'5':5,'6':6,'7':7,'8':8,'9':9,'10':10,J:11,Q:12,K:13};
   const W = window.WALLET;
@@ -5243,7 +5541,7 @@ function createPachinko(){
         + '<div><span>贷款负债</span><b style="color:#ff9aa2">$' + fmt(W.S.loan) + '</b></div>'
         + '<div><span>可借额度</span><b>$' + fmt(W.available()) + '</b></div>'
         + '<div><span>在场余额</span><b>$' + fmt(W.onTable()/100) + '</b></div>'
-        + '<div><span>今日签到</span><b>' + (W.canCheckIn() ? '可签到 +$50' : '已签到') + '</b></div>'
+        + '<div><span>今日签到</span><b>' + (W.canCheckIn() ? '可签到 +$1,000' : '已签到') + '</b></div>'
         + '<div><span>累计赢取</span><b>$' + fmt(C.won) + '</b></div>';
     }
   }
@@ -5526,6 +5824,16 @@ function createPachinko(){
     BJ.phase = 'done';
     const net = pay - staked;
     if(net > 0) C.won += net;
+    /* 惜败判定：和局（退本金）、或输在 20 点以上／只爆一两点 */
+    let bjNear = false;
+    const dv = bjVal(BJ.deal);
+    for(const h of BJ.hands){
+      const pv = bjVal(h.cards);
+      if(pv === dv) bjNear = true;
+      else if(pv > 21 && pv <= 23) bjNear = true;
+      else if(pv < dv && pv >= 20) bjNear = true;
+    }
+    if(window.MascotRound) window.MascotRound('bj', net, staked, bjNear);
     addLog('bj', note + (net > 0 ? ' +$' + net : (net < 0 ? ' -$' + Math.abs(net) : '')), net > 0 ? 'w' : (net < 0 ? 'l' : ''));
     if(net > 0) winSound(); else loseSound();
     bjRender();
@@ -5772,6 +6080,18 @@ function createPachinko(){
     const lg = $('rl-log');
     if(lg) lg.innerHTML = RL.hist.map(h => '<div><span>' + h.n + ' ' + h.col + '</span><b></b></div>').join('');
     addLog('rl', '落点 ' + n + '(' + col + ') 押注 $' + staked + ' → 赔付 $' + pay, net > 0 ? 'w' : (net < 0 ? 'l' : ''));
+    /* 惜败判定：押了具体号码，落点就在轮盘上相邻的 ±2 格 */
+    let rlNear = false;
+    const idxOf = v => RL_ORDER.findIndex(x => String(x) === String(v));
+    const wi = idxOf(n);
+    for(const k in RL.bets){
+      if(!RL.bets[k] || k.charAt(0) !== 'n') continue;
+      const bi = idxOf(k.slice(1));
+      if(bi < 0 || wi < 0) continue;
+      const d = Math.min(Math.abs(bi - wi), 38 - Math.abs(bi - wi));
+      if(d > 0 && d <= 2) rlNear = true;
+    }
+    if(window.MascotRound) window.MascotRound('rl', net, staked, rlNear);
     RL.bets = {}; RL.undo = [];
     RL.phase = 'pay';
     rlPaint();
@@ -5805,7 +6125,7 @@ function createPachinko(){
     RLX.fillStyle = '#ffd166'; RLX.fill();
     const bx = RCX + Math.cos(RL.ball)*RRO*0.82, by = RCY + Math.sin(RL.ball)*RRO*0.82;
     RLX.beginPath(); RLX.arc(bx, by, 5.5, 0, 6.2832);
-    RLX.fillStyle = '#fff'; RLX.shadowColor = '#fff'; RLX.shadowBlur = 12; RLX.fill(); RLX.shadowBlur = 0;
+    RLX.fillStyle = '#fff'; RLX.shadowColor = '#fff'; RLX.shadowBlur = FX(12); RLX.fill(); RLX.shadowBlur = 0;
     RLX.fillStyle = '#cfe9dc'; RLX.font = '700 13px "Microsoft YaHei",sans-serif';
     RLX.textAlign = 'center';
     RLX.fillText(RL.phase === 'spin' ? '转动中…' : (RL.win !== null ? '落点：' + RL.win : '押注后按「转动轮盘」'), RCX, RLH - 14);
@@ -5892,6 +6212,20 @@ function createPachinko(){
   const PK = { deck:[], hand:[], holds:[false,false,false,false,false], notes:1, unit:5, phase:'idle', msg:'' };
   const PK_PAY = [['皇家同花顺',250],['同花顺',50],['四条',25],['葫芦',9],['同花',6],['顺子',4],['三条',3],['两对',2],['对 J 以上',1]];
   const PK_NAMES = ['皇家同花顺','同花顺','四条','葫芦','同花','顺子','三条','两对','对 J 以上'];
+  /* 视频扑克「惜败」：四张同花／四张顺子／中了一对但不够 Jacks */
+  function pkNearHand(cs){
+    const suits = {}, cnt = {}, rv = [];
+    for(const c of cs){
+      suits[c.s] = (suits[c.s] || 0) + 1;
+      cnt[c.r] = (cnt[c.r] || 0) + 1;
+      rv.push(RV[c.r]);
+    }
+    for(const k in suits) if(suits[k] === 4) return true;
+    const uniq = [...new Set(rv)].sort((a,b) => a-b);
+    if(uniq.length === 4) return true;
+    for(const k in cnt) if(cnt[k] === 2) return true;
+    return false;
+  }
   function pkEval(cs){
     const rv = cs.map(c => RV[c.r]).sort((a,b) => b-a);
     const su = cs.map(c => c.s);
@@ -6002,6 +6336,7 @@ function createPachinko(){
         loseSound();
         PK.msg = '未成牌 — 无赔付';
       }
+      if(window.MascotRound) window.MascotRound('pk', pay - bet, bet, ev < 0 && pkNearHand(PK.hand));
       addLog('pk', (ev >= 0 ? PK_NAMES[ev] : '无牌型') + ' 押 $' + bet + ' → $' + pay, pay > 0 ? 'w' : 'l');
       PK.phase = 'show';
       pkRender();
@@ -6100,6 +6435,7 @@ function createPachinko(){
         CR.msg = '出 ' + sum + ' — 过线输 -$' + (CR.pass + CR.odds);
         addLog('cr', '首掷 ' + sum + ' 输 -$' + (CR.pass + CR.odds), 'l');
         loseSound();
+        if(window.MascotRound) window.MascotRound('cr', -(CR.pass + CR.odds), CR.pass + CR.odds, true);   // 首掷中大彩数＝差一点
         CR.pass = 0; CR.odds = 0;
       } else {
         CR.point = sum;
@@ -6119,6 +6455,7 @@ function createPachinko(){
       CR.msg = '七点出局 — 输 -$' + (CR.pass + CR.odds);
       addLog('cr', '出 7 输 -$' + (CR.pass + CR.odds), 'l');
       loseSound();
+      if(window.MascotRound) window.MascotRound('cr', -(CR.pass + CR.odds), CR.pass + CR.odds, true);   // 差一步就出点
       CR.pass = 0; CR.odds = 0; CR.point = 0;
     } else {
       CR.msg = '出 ' + sum + ' — 继续掷';
@@ -6446,6 +6783,18 @@ function createPachinko(){
     TH.msg = results.join('；') + (delta !== 0 ? '　你 ' + (delta > 0 ? '+' : '-') + '$' + Math.abs(delta) : '　你不输不赢');
     addLog('th', '第 ' + TH.handNo + ' 局 ' + (delta > 0 ? '赢 +$' + delta : (delta < 0 ? '输 -$' + Math.abs(delta) : '平局')),
            delta > 0 ? 'w' : (delta < 0 ? 'l' : ''));
+    /* 惜败判定：摊牌时手里有两对以上却没赢，或翻牌弃牌后牌面本会变强 */
+    let thNear = false;
+    const ms = TH.seats[0];
+    if(ms && delta <= 0){
+      const all7 = ms.cards.concat(TH.comm);
+      if(all7.length >= 5 && ev7(all7)[0] >= 2) thNear = true;          // 两对以上
+      else if(ms.folded && TH.comm.length >= 3 && ms.cards.length === 2){
+        const partial = ms.cards.concat(TH.comm.slice(0, 3));
+        if(ev7(partial)[0] >= 1) thNear = true;                          // 若没弃牌本可成对以上
+      }
+    }
+    if(window.MascotRound) window.MascotRound('th', delta, TH.pot, thNear);
     thRender();
     setTimeout(() => {
       TH.phase = 'idle'; TH.comm = []; TH.pot = 0;
@@ -6593,6 +6942,14 @@ function createPachinko(){
     RR.msg = '第 ' + pos + ' 发打响！' + (pay > 0 ? ('　押中派彩 $' + pay) : '　未押中');
     addLog('rr', '第 ' + pos + ' 发打响　押 $' + staked + ' → $' + pay, net > 0 ? 'w' : (net < 0 ? 'l' : ''));
     if(window.onGameEvent) window.onGameEvent('rr-settle', {pos, pay, net});
+    let rrNear = false;
+    for(const k in RR.bets){
+      if(!RR.bets[k]) continue;
+      const want = +k.slice(1);
+      const d = (k.charAt(0) === 'p') ? Math.abs(want - pos) : Math.abs(want + 1 - pos);
+      if(d === 1) rrNear = true;
+    }
+    if(window.MascotRound) window.MascotRound('rr', net, staked, rrNear);
     RR.hist.unshift('第' + pos + '发');
     if(RR.hist.length > 12) RR.hist.pop();
     const lg = $('rr-log');
@@ -6977,6 +7334,12 @@ function createPachinko(){
     BAC.msg = head + (BAC.pairP ? '　閒對！' : '') + (BAC.pairB ? '　莊對！' : '') + '　'
       + (net > 0 ? '赢 +$' + net : (net < 0 ? '输 -$' + (-net) : '退回本金'));
     addLog('bac', head + '　押 $' + staked + ' → $' + pay, net > 0 ? 'w' : (net < 0 ? 'l' : ''));
+    let bacNear = false;
+    if(tie && (BAC.bets.player || BAC.bets.banker)) bacNear = true;              // 和局退本金＝差一点
+    else if(!tie && Math.abs(pt - bt) === 1 && (BAC.bets.player || BAC.bets.banker)) bacNear = true;
+    if(BAC.bets.ppair && !BAC.pairP && BAC.pairB) bacNear = true;               // 押错边的对子
+    if(BAC.bets.bpair && !BAC.pairB && BAC.pairP) bacNear = true;
+    if(window.MascotRound) window.MascotRound('bac', net, staked, bacNear);
     BAC.hist.unshift(tie ? 't' : (pWin ? 'p' : 'b'));
     if(BAC.hist.length > 12) BAC.hist.pop();
     if(net >= 200 || (net > 0 && net >= staked * 5)){ if(window.onGameEvent) window.onGameEvent('jackpot'); }
@@ -7206,6 +7569,21 @@ function createPachinko(){
            net > 0 ? 'w' : (net < 0 ? 'l' : ''));
     if(net >= 200 || (net > 0 && net >= staked * 8)){ if(window.onGameEvent) window.onGameEvent('jackpot'); }
     else if(net < 0 && Math.random() < 0.45){ if(window.onGameEvent) window.onGameEvent('spin-miss'); }
+    let sicNear = false;
+    for(const k in SIC.bets){
+      if(!SIC.bets[k]) continue;
+      if(k.slice(0, 3) === 'sum' && Math.abs(+k.slice(3) - s) === 1) sicNear = true;
+      if((k === 'big' && s === 10) || (k === 'small' && s === 11)) sicNear = true;
+      if(k.charAt(0) === 'c'){
+        const c1 = (d[0] === +k.charAt(1) || d[1] === +k.charAt(1) || d[2] === +k.charAt(1)) ? 1 : 0;
+        const c2 = (d[0] === +k.charAt(2) || d[1] === +k.charAt(2) || d[2] === +k.charAt(2)) ? 1 : 0;
+        if(c1 + c2 === 1) sicNear = true;                                       // 两颗里只中一颗
+      }
+      if(k.charAt(0) === 'd' && sicEval(d, k) === 0 && SIC.bets[k] > 0){
+        /* 押的单骰一颗都没出，但总和只差一点也算（由上两条覆盖） */
+      }
+    }
+    if(window.MascotRound) window.MascotRound('sic', net, staked, sicNear);
     SIC.phase = 'pay';
     sicPaint();
     setTimeout(() => {
@@ -7371,6 +7749,9 @@ function createPachinko(){
     W.settle(KEN.staked, pay, 'win');
     C.hands++;
     const net = pay - KEN.staked;
+    let minPay = 0;
+    for(let c = 1; c < tb.length; c++) if(tb[c] > 0){ minPay = c; break; }
+    const kenNear = (mult === 0 && hits > 0 && minPay > 0 && hits >= minPay - 1);   // 差一个号就进赔付档
     if(net > 0){ C.won += net; winSound(); } else loseSound();
     KEN.hits = hits;
     KEN.msg = '命中 ' + hits + ' / ' + n + ' 个　'
@@ -7379,6 +7760,7 @@ function createPachinko(){
            net > 0 ? 'w' : (net < 0 ? 'l' : ''));
     if(net >= 200 || mult >= 100){ if(window.onGameEvent) window.onGameEvent('jackpot'); }
     else if(net < 0 && Math.random() < 0.45){ if(window.onGameEvent) window.onGameEvent('spin-miss'); }
+    if(window.MascotRound) window.MascotRound('ken', net, KEN.staked, kenNear);
     KEN.phase = 'pay';
     kenPaint();
     setTimeout(() => {
